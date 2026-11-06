@@ -1,0 +1,2322 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embed Studio — Dashboard Pesan Discord</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08071a; --ink:#ecebff; --mute:#9a97c4; --line:rgba(255,255,255,.09);
+  --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.09);
+  --neon:#a46bff; --neon2:#7c3aed; --blue:#2f8cff; --cyan:#35d6ff; --ok:#3ddc97; --bad:#ff5d7a;
+  --dc-bg:#313338; --dc-embed:#2b2d31; --dc-text:#dbdee1; --dc-mute:#949ba4; --dc-link:#00a8fc; --dc-mention:#c9cdfb;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;z-index:0;border-radius:50%;filter:blur(110px);pointer-events:none}
+body::before{width:520px;height:520px;left:-140px;top:-120px;background:radial-gradient(circle,#7c3aed 0%,transparent 70%);opacity:.55}
+body::after{width:560px;height:560px;right:-160px;bottom:-160px;background:radial-gradient(circle,#2f8cff 0%,transparent 70%);opacity:.45}
+#root{position:relative;z-index:1;min-height:100%}
+h1,h2,h3{margin:0;letter-spacing:-.02em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.btn{border:0;cursor:pointer;border-radius:12px;padding:10px 18px;font-weight:700;background:var(--glass2);border:1px solid var(--line);transition:.15s}
+.btn:hover{background:rgba(255,255,255,.14)}
+.btn.primary{background:linear-gradient(120deg,var(--neon2),var(--blue));border-color:transparent;box-shadow:0 8px 28px -8px rgba(124,58,237,.8)}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.small{padding:6px 12px;font-size:13px;border-radius:9px}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:clamp(20px,5vw,64px)}
+.login-layout{width:100%;max-width:1080px;display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.9fr);gap:clamp(28px,6vw,72px);align-items:center}
+.login-intro{padding:clamp(8px,2vw,24px)}
+.login-brand{display:inline-flex;align-items:center;gap:12px;padding:10px 16px 10px 10px;margin-bottom:36px}
+.login-brand .logo{width:42px;height:42px;border-radius:14px;margin:0;box-shadow:var(--clay);font-size:20px}
+.login-brand-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em}
+.login-brand-caption{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute)}
+.login-intro h1{max-width:560px;font-size:clamp(36px,5vw,58px);line-height:1.08;font-weight:700}
+.login-intro>p{max-width:540px;color:var(--mute);font-size:16px;line-height:1.8;margin:18px 0 26px}
+.login-feature-list{display:grid;gap:12px;max-width:540px}
+.login-feature{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.78);box-shadow:var(--clay)}
+.login-feature-icon{width:38px;height:38px;flex:none;border-radius:13px;display:grid;place-items:center;background:#dbe1ff;color:#004ac6;font-size:18px;font-weight:800}
+.login-feature b{display:block;font-size:13px}
+.login-feature span{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.login-card{width:100%;padding:clamp(28px,4vw,44px);text-align:left}
+.login-card h2{font-family:'Space Grotesk',sans-serif;font-size:24px;letter-spacing:-.02em}
+.login-card>p{color:var(--mute);margin:8px 0 24px;line-height:1.7}
+.auth-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:5px;margin-bottom:20px;border-radius:13px;background:var(--well);box-shadow:var(--well-sh)}
+.auth-switch button{border:0;border-radius:10px;padding:10px;background:transparent;color:var(--mute);font-weight:700;cursor:pointer}
+.auth-switch button.on{background:#fff;color:var(--ink);box-shadow:var(--clay)}
+.auth-step{display:grid;gap:12px}
+.auth-step .row{margin-bottom:0}
+.auth-step .hint{margin:0}
+.login-card .auth-step>p{margin:0}
+.login-card .btn.discord{display:flex;align-items:center;justify-content:center;gap:12px;background:#5865f2;color:#fff;border:0;width:100%;padding:15px 18px;font-size:15px;text-decoration:none;box-shadow:0 12px 24px -8px rgba(88,101,242,.5),inset 0 1px 1px rgba(255,255,255,.4)}
+.login-card .btn.discord:hover{background:#6b77ff;transform:translateY(-1px)}
+.login-discord-mark{width:24px;height:24px;flex:none}
+.login-security-note{display:flex;gap:10px;margin-top:18px;padding:14px;border-radius:14px;background:var(--well);box-shadow:var(--well-sh);color:var(--mute);font-size:12px;line-height:1.7}
+.login-security-note b{color:var(--ink)}
+.login-security-icon{color:var(--neon);font-size:16px;flex:none}
+.login-card .login-setup-hint{font-size:12px;margin:18px 0 0;text-align:center}
+.login-card .login-setup-hint strong{color:var(--ink)}
+.login-footer{max-width:1080px;width:100%;margin-top:32px;text-align:center;color:var(--mute);font-size:11px}
+@media(max-width:760px){
+  .login{padding:24px 18px}
+  .login-layout{grid-template-columns:1fr;gap:24px;max-width:520px}
+  .login-intro{padding:0}
+  .login-brand{margin-bottom:24px}
+  .login-intro h1{font-size:clamp(34px,10vw,48px)}
+  .login-intro>p{font-size:14px;margin:12px 0 18px}
+  .login-feature-list{gap:8px}
+  .login-feature{padding:11px 13px}
+  .login-card{padding:26px 22px}
+  .login-footer{margin-top:20px}
+}
+
+/* layout */
+.top{display:flex;align-items:center;gap:14px;padding:16px 28px;border-bottom:1px solid var(--line);backdrop-filter:blur(14px);position:sticky;top:0;z-index:5;background:rgba(8,7,26,.6)}
+.brand{font-weight:800;font-size:18px;display:flex;align-items:center;gap:10px}
+.brand i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--neon),var(--blue));display:grid;place-items:center;font-style:normal;font-size:15px}
+.spacer{flex:1}
+.me{display:flex;align-items:center;gap:10px;font-weight:600}
+.me img{width:32px;height:32px;border-radius:50%}
+.profile-trigger{border:0;background:transparent;color:inherit;padding:4px 8px;border-radius:999px;cursor:pointer}
+.profile-trigger:hover{background:rgba(37,99,235,.08)}
+.wrap{width:100%;max-width:1800px;margin:0 auto;padding:clamp(20px,3vw,42px) clamp(18px,4vw,64px)}
+
+/* guild picker */
+.page-title{font-size:28px;font-weight:800;margin-bottom:6px}
+.sub{color:var(--mute);margin:0 0 24px}
+.guilds{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.guild{padding:20px;display:flex;flex-direction:column;gap:14px;cursor:pointer;transition:.18s;text-align:left;color:inherit}
+.guild:hover{transform:translateY(-3px);border-color:rgba(164,107,255,.6);box-shadow:0 14px 40px -16px var(--neon)}
+.gicon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#3b2a78,#1d3b78);display:grid;place-items:center;font-weight:800;font-size:20px;overflow:hidden}
+.gicon img{width:100%;height:100%;object-fit:cover}
+.guild b{font-size:16px}
+.guild small{color:var(--mute)}
+.empty{padding:40px;text-align:center;color:var(--mute)}
+.empty .btn{margin-top:16px}
+
+/* studio */
+.studio{display:grid;grid-template-columns:250px minmax(0,1fr);gap:clamp(18px,2vw,32px);align-items:start}
+.side{padding:14px;position:sticky;top:84px}
+.side .gname{display:flex;align-items:center;gap:10px;padding:6px 6px 14px;border-bottom:1px solid var(--line);margin-bottom:10px;font-weight:700}
+.side .gname .gicon{width:36px;height:36px;border-radius:11px;font-size:14px;flex:none}
+.tab{display:flex;width:100%;align-items:center;gap:10px;background:none;border:0;color:var(--mute);padding:10px 12px;border-radius:11px;cursor:pointer;font-weight:600;text-align:left}
+.tab:hover{background:var(--glass)}
+.tab.on{background:linear-gradient(120deg,rgba(124,58,237,.45),rgba(47,140,255,.3));color:#fff}
+.back{margin-top:10px;width:100%}
+
+.cols{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(360px,.85fr);gap:clamp(20px,2.4vw,36px);align-items:start}
+.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.panel{padding:clamp(22px,2.2vw,34px)}
+.panel h3{font-size:16px;margin-bottom:14px}
+.row{display:grid;gap:6px;margin-bottom:14px}
+.row label{font-weight:600;font-size:13px;color:var(--mute)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input[type=text],input[type=url],textarea,select{width:100%;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:11px;padding:10px 12px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--neon)}
+textarea{resize:vertical;min-height:120px;line-height:1.65}
+textarea[data-k="content"]{min-height:130px}
+textarea[data-k="description"]{min-height:250px;font-size:15px;line-height:1.7}
+select option{background:#14122e}
+.sw{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sw input[type=color]{width:42px;height:38px;border:0;padding:0;background:none;cursor:pointer}
+.chip{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.25);cursor:pointer;padding:0}
+.chip.on{border-color:#fff}
+.toggle{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+.toggle input{accent-color:var(--neon2);width:18px;height:18px}
+.vars{display:flex;flex-wrap:wrap;gap:6px}
+.var{background:rgba(164,107,255,.16);border:1px solid rgba(164,107,255,.35);color:#d6c2ff;border-radius:8px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:ui-monospace,Consolas,monospace}
+.var:hover{background:rgba(164,107,255,.32)}
+.asset-grid{display:flex;flex-wrap:wrap;gap:7px;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.16);max-height:190px;overflow:auto}
+.asset{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.06);padding:5px 8px;cursor:pointer;color:inherit;max-width:150px}
+.asset:hover{background:rgba(164,107,255,.25);border-color:rgba(164,107,255,.65)}
+.asset img{width:26px;height:26px;object-fit:contain;border-radius:5px}
+.asset span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.dc-emoji{width:22px;height:22px;object-fit:contain;vertical-align:middle}
+.media-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.media-preview img{width:76px;height:54px;object-fit:cover;border-radius:7px;border:1px solid var(--line)}
+.imgf{display:flex;gap:8px}
+.card-in{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:rgba(0,0,0,.16)}
+.hr{height:1px;background:var(--line);margin:18px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* preview (gaya Discord) */
+.preview{position:sticky;top:84px}
+.dc{background:var(--dc-bg);border-radius:14px;padding:18px 16px;font-family:'gg sans','Plus Jakarta Sans',sans-serif;color:var(--dc-text);font-size:15px;box-shadow:0 20px 50px -20px #000}
+.dc-msg{display:flex;gap:14px}
+.dc-av{width:40px;height:40px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--neon2),var(--blue));overflow:hidden}
+.dc-av img{width:100%;height:100%;object-fit:cover}
+.dc-body{min-width:0;flex:1}
+.dc-head{display:flex;gap:8px;align-items:center;margin-bottom:2px}
+.dc-head b{color:#fff}
+.dc-tag{background:#5865f2;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px}
+.dc-time{color:var(--dc-mute);font-size:12px}
+.dc-txt{white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere}
+.mention{background:rgba(88,101,242,.3);color:var(--dc-mention);border-radius:4px;padding:0 3px}
+.dc-embed{margin-top:6px;background:var(--dc-embed);border-left:4px solid var(--neon);border-radius:4px;padding:10px 14px 14px;max-width:440px;display:grid;gap:8px;position:relative}
+.dc-embed .au{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#fff}
+.dc-embed .au img{width:22px;height:22px;border-radius:50%}
+.dc-embed .ti{font-weight:700;color:#fff;font-size:16px}
+.dc-embed .ti.lnk{color:var(--dc-link)}
+.dc-embed .de{font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.dc-embed .th{position:absolute;right:12px;top:12px;width:70px;height:70px;border-radius:6px;object-fit:cover}
+.dc-embed.hasth .au,.dc-embed.hasth .ti,.dc-embed.hasth .de{padding-right:84px}
+.dc-embed .big{width:100%;border-radius:6px;max-height:260px;object-fit:cover}
+.dc-embed .fl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dc-embed .f{grid-column:1/-1;font-size:14px}
+.dc-embed .f.inl{grid-column:auto}
+.dc-embed .f b{display:block;color:#fff;font-size:13.5px}
+.dc-embed .ft{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dc-mute)}
+.dc-embed .ft img{width:18px;height:18px;border-radius:50%}
+.dc-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.dc-btn{background:#4e5058;color:#fff;border-radius:4px;padding:6px 14px;font-size:13.5px;font-weight:500}
+.dc-btn .dc-emoji{width:18px;height:18px;margin-right:5px;vertical-align:-4px}
+.hint{color:var(--mute);font-size:12.5px;margin-top:10px}
+code.i{background:rgba(255,255,255,.1);padding:0 5px;border-radius:5px}
+
+/* module + templates */
+.modhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.tpl{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+.tpl b{flex:1}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0 22px}
+.preset{position:relative;overflow:hidden;padding:16px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.025));cursor:pointer;text-align:left;transition:.18s;color:inherit}
+.preset::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--preset-color,var(--neon))}
+.preset:hover{transform:translateY(-3px);border-color:rgba(164,107,255,.65);box-shadow:0 14px 30px -18px var(--neon)}
+.preset b{display:block;font-size:14px;margin-bottom:5px}
+.preset small{display:block;color:var(--mute);line-height:1.45}
+.preset .badge{display:inline-block;margin-top:10px;color:#d9ccff;background:rgba(164,107,255,.16);border-radius:999px;padding:3px 8px;font-size:11px}
+.section-title{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
+.section-title h3{margin:0}
+.section-title span{color:var(--mute);font-size:12px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);padding:12px 20px;border-radius:12px;font-weight:600;z-index:50;backdrop-filter:blur(14px);border:1px solid var(--line);animation:pop .2s ease-out}
+.toast.ok{background:rgba(61,220,151,.18);color:var(--ok)}
+.toast.err{background:rgba(255,93,122,.18);color:var(--bad)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(3,2,15,.72);backdrop-filter:blur(8px);z-index:40;display:grid;place-items:center;padding:20px}
+.modal{width:min(560px,100%);padding:24px;box-shadow:0 24px 80px -25px #000}
+.modal h3{font-size:20px;margin-bottom:7px}
+.modal p{color:var(--mute);margin:0 0 16px}
+.share-row{display:flex;gap:8px;align-items:center}
+.share-row input{flex:1;min-width:0}
+@keyframes pop{from{transform:translate(-50%,10px);opacity:0}}
+.loading{min-height:100vh;display:grid;place-items:center;color:var(--mute)}
+
+@media (max-width:1000px){
+  .studio{grid-template-columns:1fr}.side{position:static}
+  .side nav{display:flex;gap:6px;overflow-x:auto}.tab{white-space:nowrap;width:auto}
+  .cols{grid-template-columns:1fr}.settings-grid{grid-template-columns:1fr}.preview{position:static}
+  .wrap{padding:18px}.top{padding:14px 18px}
+}
+@media (min-width:1500px){
+  .studio{grid-template-columns:270px minmax(0,1fr)}
+  .panel{padding:32px}
+  .dc-embed{max-width:620px}
+}
+@media (max-width:640px){
+  body{font-size:14px}
+  .profile-trigger{gap:6px;padding:4px}
+    .profile-trigger span{max-width:72px;overflow:hidden;text-overflow:ellipsis}
+    .profile-page{padding:18px 14px!important}
+    .profile-layout{grid-template-columns:1fr!important}
+    .profile-forms{grid-template-columns:1fr!important}
+    .profile-hero{padding:24px!important}
+  .wrap{padding:14px 12px}
+  .top{padding:12px 14px}
+  .top .me{max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .studio{gap:14px}
+  .side{padding:10px;border-radius:14px}
+  .side .gname{padding-bottom:10px}
+  .panel{padding:16px;border-radius:14px}
+  .two{grid-template-columns:1fr}
+  .actions .btn{flex:1 1 auto}
+  textarea[data-k="description"]{min-height:210px}
+  .preview{min-width:0}
+  .dc{padding:14px 12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ========== EMBED STUDIO — CLAY SKIN ========== */
+:root{
+  --bg:#faf8ff; --ink:#131b2e; --mute:#434655; --line:rgba(195,198,215,.55);
+  --glass:#ffffff; --glass2:#eaedff;
+  --neon:#2563eb; --neon2:#1d4ed8; --blue:#3b82f6; --cyan:#004ac6; --ok:#16a34a; --bad:#ba1a1a;
+  --clay:0 10px 25px -5px rgba(37,99,235,.08),0 8px 10px -6px rgba(15,23,42,.04),inset 0 2px 2px rgba(255,255,255,.95),inset 0 -2px 4px rgba(148,163,184,.15);
+  --well:#F1F5F9; --well-sh:inset 0 2px 4px rgba(15,23,42,.06),inset 0 1px 2px rgba(37,99,235,.04),0 1px 1px rgba(255,255,255,.8);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+body::before{content:"";inset:auto;left:-120px;top:-100px;width:420px;height:420px;border-radius:50%;filter:blur(90px);opacity:.8;background:#dbe1ff}
+body::after{content:"";inset:auto;right:-140px;bottom:-140px;width:460px;height:460px;border-radius:50%;filter:blur(100px);opacity:.6;background:#c4e7ff}
+h1,h2,h3,.brand,.tab,.page-title,.login-card h1{font-family:'Space Grotesk',sans-serif}
+
+/* top bar */
+.top{background:rgba(255,255,255,.85);border-bottom:0;box-shadow:0 1px 8px rgba(37,99,235,.08);font-family:'Plus Jakarta Sans',sans-serif}
+.brand{text-transform:none;letter-spacing:-.01em;font-size:19px}
+.brand i{border-radius:12px;background:linear-gradient(180deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 8px 16px -2px rgba(37,99,235,.3),inset 0 2px 2px rgba(255,255,255,.7),inset 0 -2px 4px rgba(0,0,0,.2)}
+.me img{border:2px solid #fff;box-shadow:var(--clay)}
+
+/* cards */
+.glass{background:#fff;border:0;border-radius:16px;box-shadow:var(--clay);backdrop-filter:none;-webkit-backdrop-filter:none}
+.glass.panel::before,.glass.panel::after{display:none}
+.panel h3,.preview>h3{font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--ink);text-shadow:none;letter-spacing:-.01em}
+.panel h3::before,.preview>h3::before,.row label::before{content:none}
+.page-title,.login-card h1{text-shadow:none;font-size:32px;letter-spacing:-.025em}
+.sub,.guild small,.hint,.row label{font-family:'Plus Jakarta Sans',sans-serif}
+.row label{color:var(--ink);letter-spacing:0}
+.hint{color:#737686}
+code.i{background:#eaedff;color:var(--cyan)}
+
+/* buttons */
+.btn{font-family:'Plus Jakarta Sans',sans-serif;border:0;border-radius:12px;background:#fff;color:var(--ink);box-shadow:var(--clay);transition:.15s}
+.btn:hover{background:#f2f3ff;box-shadow:var(--clay)}
+.btn:active{transform:translateY(1.5px)}
+.btn.primary{color:#fff;background:linear-gradient(180deg,#3b82f6,#1d4ed8);box-shadow:0 14px 28px -8px rgba(37,99,235,.45),inset 0 1.5px 1px rgba(255,255,255,.4),inset 0 -2px 3px rgba(0,0,0,.2)}
+.btn.primary:hover{filter:brightness(1.07);background:linear-gradient(180deg,#3b82f6,#1d4ed8)}
+.btn.danger{color:var(--bad)}
+.btn.discord{background:#5865f2;color:#fff}
+.btn.discord:hover{background:#6b77ff}
+
+/* sidebar tabs */
+.side{padding:16px}
+.side .gname{font-family:'Space Grotesk',sans-serif;color:var(--ink);border-bottom-color:#e2e7ff}
+.gicon{background:linear-gradient(135deg,#dbe1ff,#c4e7ff);color:var(--cyan);box-shadow:var(--clay)}
+.tab{font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;border-radius:12px;color:var(--mute);letter-spacing:0}
+.tab:hover{background:#e2e7ff;color:var(--ink)}
+.tab.on{color:#fff;background:#2563eb;box-shadow:0 10px 20px rgba(37,99,235,.25),inset 0 2px 2px rgba(255,255,255,.35)}
+
+/* form controls */
+input[type=text],input[type=url],input[type=number],input[type=password],textarea,select{font-family:'Plus Jakarta Sans',sans-serif;background:var(--well);border:0;border-radius:12px;box-shadow:var(--well-sh);color:var(--ink);caret-color:#2563eb}
+input:focus,textarea:focus,select:focus{background:#fff;border:0;box-shadow:0 0 0 2px rgba(37,99,235,.3)}
+.secret-field{position:relative;display:flex;align-items:center}
+.secret-field input{width:100%;padding-right:48px}
+.secret-toggle{position:absolute;right:7px;width:36px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:9px;background:transparent;color:#737686;cursor:pointer}
+.secret-toggle:hover{background:#e2e7ff;color:#1d4ed8}
+.secret-toggle:focus-visible{outline:2px solid rgba(37,99,235,.5);outline-offset:1px}
+select option{background:#fff;color:var(--ink)}
+textarea[data-k="description"]{font-size:14px}
+.var{font-family:'JetBrains Mono',monospace;border-radius:9999px;background:#f2f3ff;border:0;color:var(--cyan);box-shadow:var(--clay)}
+.var:hover{background:#2563eb;color:#fff;box-shadow:var(--clay)}
+.asset-grid{border:0;background:var(--well);box-shadow:var(--well-sh);border-radius:12px;scrollbar-color:#b4c5ff transparent}
+.asset{border:0;border-radius:10px;background:#fff;box-shadow:var(--clay)}
+.asset:hover{background:#f2f3ff;box-shadow:var(--clay);transform:translateY(-2px)}
+.card-in,.tpl{border:0;border-radius:12px;background:var(--well);box-shadow:var(--well-sh)}
+.chip{border-color:#fff;box-shadow:var(--clay)}
+.chip.on{border-color:#131b2e}
+.toggle{font-family:'Plus Jakarta Sans',sans-serif}
+.toggle input,.toggle input:checked{background:none;box-shadow:none;border-color:transparent;accent-color:#2563eb}
+.hr{background:#e2e7ff;box-shadow:none}
+.badge{display:inline-block;background:#dbe1ff;color:var(--cyan);border-radius:9999px;padding:3px 10px;font-size:11px;font-weight:700}
+
+/* guilds & presets */
+.guild{border-radius:16px}
+.guild:hover{border:0;transform:translateY(-4px);box-shadow:0 18px 36px -12px rgba(37,99,235,.28),inset 0 2px 2px rgba(255,255,255,.95)}
+.preset{border:0;border-radius:16px;background:#fff;box-shadow:var(--clay)}
+.preset:hover{border:0;box-shadow:0 18px 36px -12px rgba(37,99,235,.28),inset 0 2px 2px rgba(255,255,255,.95)}
+.preset .badge{background:#dbe1ff;color:var(--cyan)}
+
+/* login */
+.logo{border-radius:20px;background:linear-gradient(135deg,#dbe1ff,#2563eb);color:#fff;box-shadow:0 8px 16px -2px rgba(37,99,235,.3),inset 0 2px 2px rgba(255,255,255,.8),inset 0 -2px 4px rgba(0,0,0,.2)}
+.login-card{border-radius:2rem}
+
+/* Discord preview tetap gelap agar 1:1 */
+.dc{box-shadow:0 12px 30px -12px rgba(15,23,42,.45),inset 0 2px 6px rgba(0,0,0,.4)}
+
+/* toast & modal */
+.toast{background:#fff;border:0;box-shadow:0 12px 30px -8px rgba(37,99,235,.25)}
+.toast.ok{color:var(--ok)}.toast.err{color:var(--bad)}
+.modal-backdrop{background:rgba(19,27,46,.4);backdrop-filter:blur(6px)}
+.empty{color:#737686}
+.profile-page{max-width:1380px;padding-top:28px}
+.profile-back{margin-bottom:24px}
+.profile-heading{margin-bottom:22px}
+.profile-heading .page-title{margin:10px 0 4px}
+.profile-heading .sub{margin:0}
+.profile-layout{display:grid;grid-template-columns:minmax(250px,310px) minmax(0,1fr);gap:22px;align-items:start}
+.profile-hero{position:relative;overflow:hidden;padding:30px 24px;text-align:center;background:linear-gradient(155deg,#fff 8%,#edf2ff 100%)}
+.profile-hero::before{content:"";position:absolute;width:210px;height:210px;top:-110px;right:-70px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.35),transparent 70%)}
+.profile-avatar-wrap{position:relative;width:138px;height:138px;margin:2px auto 18px}
+.profile-avatar{width:100%;height:100%;display:grid;place-items:center;border:5px solid #fff;border-radius:38px;object-fit:cover;box-shadow:0 14px 30px rgba(37,99,235,.2),var(--clay)}
+.profile-avatar-fallback{background:linear-gradient(145deg,#93c5fd,#4f46e5);color:white;font-size:54px;font-weight:800}
+.profile-header-fallback{width:32px;height:32px;flex:none;border-radius:50%;font-size:14px}
+.profile-online{position:absolute;right:4px;bottom:6px;width:22px;height:22px;border:4px solid white;border-radius:50%;background:#22c55e}
+.profile-eyebrow{display:block;color:#64748b;font-size:10px;font-weight:800;letter-spacing:.16em}
+.profile-hero h2{margin-top:5px;font-family:'Space Grotesk',sans-serif;font-size:24px;overflow-wrap:anywhere}
+.profile-discord{margin:4px 0 18px;color:#737686;font-size:12px}
+.profile-email-chip{display:flex;align-items:center;justify-content:center;gap:7px;max-width:100%;padding:10px 12px;border-radius:12px;background:#fff;box-shadow:var(--clay);font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.profile-check{display:grid;place-items:center;flex:none;width:19px;height:19px;border-radius:50%;background:#dcfce7;color:#15803d}
+.profile-status{margin-top:10px;color:#15803d;font-size:11px;font-weight:700}
+.profile-hero-note{display:flex;gap:8px;margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;color:#737686;text-align:left;font-size:11px;line-height:1.7}
+.profile-hero-note span:first-child{color:#2563eb}
+.profile-content{display:grid;gap:18px;min-width:0}
+.profile-panel{padding:22px}
+.profile-section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+.profile-section-head h2{font-family:'Space Grotesk',sans-serif;font-size:19px}
+.profile-section-head p{margin:5px 0 0;color:#737686;font-size:12px;line-height:1.55}
+.profile-section-icon{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:12px;background:#eaf0ff;color:#2563eb;font-size:18px;font-weight:800}
+.profile-form{display:grid;gap:12px}
+.profile-form .row{margin:0}
+.profile-forms{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.profile-form input[readonly]{color:#737686;cursor:not-allowed}
+.profile-form .actions{margin-top:2px}
+.profile-security-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.profile-otp-destination{margin:0;padding:11px 12px;border-radius:11px;background:#eff6ff;color:#475569;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.profile-password-hint{margin:-5px 0 0;color:#737686;font-size:11px}
+@media(max-width:1000px){.profile-layout{grid-template-columns:240px minmax(0,1fr)}.profile-security-grid{grid-template-columns:1fr}}
+.health-panel{padding:24px;margin-bottom:22px}
+.health-panel-title{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
+.health-panel-title h3{margin:9px 0 3px;font-family:'Space Grotesk',sans-serif;font-size:22px}
+.health-panel-title .hint{margin:0;font-size:12px}
+.health-status{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+.health-status i,.health-pulse{width:9px;height:9px;border-radius:50%;background:currentColor}
+.health-status.healthy{background:#dcfce7;color:#15803d}
+.health-status.warning{background:#fef3c7;color:#a16207}
+.health-status.critical{background:#fee2e2;color:#b91c1c}
+.health-pulse{margin:10px 4px 0;background:#2563eb;box-shadow:0 0 0 5px rgba(37,99,235,.12);animation:health-pulse 1.8s ease-out infinite}
+@keyframes health-pulse{50%{box-shadow:0 0 0 9px rgba(37,99,235,0)}}
+.health-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.health-metric{min-width:0;padding:15px;border-radius:14px;background:#f5f7ff;box-shadow:inset 0 1px 3px rgba(15,23,42,.035)}
+.health-metric-head{display:flex;justify-content:space-between;align-items:center;gap:6px;color:#667085;font-size:11px;font-weight:700}
+.health-metric strong{display:block;margin:7px 0 3px;color:#172033;font-family:'Chakra Petch',sans-serif;font-size:24px;line-height:1.2;overflow-wrap:anywhere}
+.health-metric small{display:block;min-height:18px;color:#737686;font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+.health-sparkline{width:72px;height:24px;flex:none}
+.health-meter{height:5px;margin-top:10px;overflow:hidden;border-radius:99px;background:#e1e6f2}
+.health-meter i{display:block;height:100%;border-radius:inherit;transition:width .35s ease}
+.health-runtime{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px;padding-top:15px;border-top:1px solid #e7eaf2;color:#737686;font-family:'JetBrains Mono',monospace;font-size:10px}
+.health-runtime b{color:#374151;font-weight:700}
+.health-error{margin:10px 0;padding:10px 12px;border-radius:10px;background:#fef2f2;color:#b91c1c;font-size:12px}
+@media(max-width:760px){.health-panel{padding:17px}.health-panel-title{flex-direction:column}.health-status{align-self:flex-start}.health-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.health-metrics{grid-template-columns:1fr 1fr;gap:8px}.health-metric{padding:11px}.health-metric strong{font-size:20px}.health-metric-head{font-size:10px}.health-runtime{font-size:9px}}
+</style>
+</head>
+<body>
+<div id="root"><div class="loading">Memuat…</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+async function api(path, opts = {}) {
+  const isForm = opts.body instanceof FormData;
+  let r;
+  try {
+    r = await fetch(path, {
+      credentials: 'same-origin',
+      ...opts,
+      headers: opts.body && !isForm ? { 'Content-Type': 'application/json' } : undefined,
+      body: opts.body && !isForm ? JSON.stringify(opts.body) : opts.body,
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(`Tidak dapat menghubungi server Embed Studio di ${location.origin}. Pastikan server berjalan dengan npm start, lalu muat ulang halaman.`);
+    }
+    throw error;
+  }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Terjadi kesalahan');
+  return j;
+}
+
+function SecretInput({ label, ...props }) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="secret-field">
+      <input {...props} type={visible ? 'text' : 'password'} />
+      <button
+        className="secret-toggle"
+        type="button"
+        aria-label={`${visible ? 'Sembunyikan' : 'Tampilkan'} ${label}`}
+        aria-pressed={visible}
+        title={`${visible ? 'Sembunyikan' : 'Tampilkan'} ${label}`}
+        onClick={() => setVisible((current) => !current)}
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          {visible ? <>
+            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" />
+            <circle cx="12" cy="12" r="3" />
+          </> : <>
+            <path d="M3 3l18 18M10.6 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-3.1 3.8M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 1.9-.2 2.8-.5" />
+            <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+          </>}
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function DiscordBotIntentGuide({ clientId }) {
+  const botSettingsUrl = /^\d{17,20}$/.test(String(clientId || ''))
+    ? `https://discord.com/developers/applications/${clientId}/bot`
+    : 'https://discord.com/developers/applications';
+
+  return (
+    <div className="card-in" style={{ marginTop: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <b>Checklist Developer Portal → Bot</b>
+        <a className="btn small" href={botSettingsUrl} target="_blank" rel="noreferrer">Buka pengaturan Bot ↗</a>
+      </div>
+      <p className="hint" style={{ margin: '8px 0 12px' }}>Di <b>Privileged Gateway Intents</b>, aktifkan hanya yang diperlukan:</p>
+      <div style={{ display: 'grid', gap: 10 }}>
+        <div>
+          <b style={{ color: 'var(--ok)' }}>☑ SERVER MEMBERS INTENT — aktifkan</b>
+          <div className="hint">Diperlukan agar welcome dan goodbye otomatis menerima event anggota masuk/keluar. Setelah mengubahnya, simpan perubahan di Developer Portal.</div>
+        </div>
+        <div>
+          <b>☐ PRESENCE INTENT — biarkan mati</b>
+          <div className="hint">Embed Studio tidak membaca status presence bot pengguna.</div>
+        </div>
+        <div>
+          <b>☐ MESSAGE CONTENT INTENT — biarkan mati</b>
+          <div className="hint">Tidak diperlukan: editor mengirim pesan melalui API Discord dan command /pesan memakai interaction, bukan membaca isi pesan anggota.</div>
+        </div>
+      </div>
+      <p className="hint" style={{ margin: '12px 0 0' }}>Izin <b>Administrator</b> bukan Gateway Intent. Itu dipilih saat mengundang bot ke server dan memberi akses sangat luas; jangan aktifkan intent lain untuk menggantikannya.</p>
+    </div>
+  );
+}
+
+const VARIABLES = ['{server.name}','{server.id}','{server.memberCount}','{server.icon}','{user.name}','{user.mention}','{user.id}','{user.avatar}','{user.roles}','{user.roleNames}','{user.highestRole}','{channel.name}','{channel.mention}','{date}','{time}','{bot.name}'];
+const COLORS = ['#8b5cf6','#2f8cff','#35d6ff','#3ddc97','#ffb020','#ff5d7a'];
+
+const blankMessage = () => ({
+  content: '',
+  stickers: [],
+  media: [],
+  embed: { enabled: true, authorName: '{server.name}', authorIcon: '{server.icon}', title: 'Pengumuman', titleUrl: '',
+    description: 'Halo {user.mention}, ini pesan dari {server.name}.', color: '#8b5cf6', thumbnail: '', image: '',
+    footerText: '{server.name}', footerIcon: '', timestamp: true, fields: [] },
+  buttons: [],
+});
+
+const presetMessage = ({ content = '', title, description, color = '#8b5cf6', footerText = '{server.name}', buttons = [], thumbnail = '{server.icon}', image = '' }) => ({
+  ...blankMessage(),
+  content,
+  embed: { ...blankMessage().embed, title, description, color, footerText, thumbnail, image },
+  buttons,
+});
+
+const PRESET_TEMPLATES = [
+  { id: 'neon-announcement', name: 'Neon Announcement', category: 'Announcement', color: '#8b5cf6', description: 'Pengumuman modern dengan nuansa neon.', message: presetMessage({ title: '📢 Pengumuman Penting', description: 'Halo {user.mention}!\n\nAda kabar baru dari **{server.name}**. Jangan sampai ketinggalan ya.', color: '#8b5cf6', footerText: 'Info resmi • {server.name}' }) },
+  { id: 'giveaway', name: 'Giveaway Drop', category: 'Event', color: '#ff5d7a', description: 'Cocok untuk giveaway dan hadiah komunitas.', message: presetMessage({ title: '🎁 GIVEAWAY DIMULAI', description: 'Saatnya berburu hadiah!\n\nKlik tombol di bawah dan ikuti semua syaratnya.', color: '#ff5d7a', footerText: 'Semoga beruntung!', buttons: [{ label: 'Ikuti Giveaway', url: 'https://discord.com' }] }) },
+  { id: 'event', name: 'Event Countdown', category: 'Event', color: '#2f8cff', description: 'Kartu event dengan CTA yang jelas.', message: presetMessage({ title: '⚡ EVENT SERVER', description: '**Waktu:** Hari ini pukul {time}\n**Peserta:** {server.memberCount} anggota\n\nSiapkan diri dan ramaikan event-nya!', color: '#2f8cff', footerText: '{server.name} • Sampai jumpa di event', buttons: [{ label: 'Lihat Detail', url: 'https://discord.com' }] }) },
+  { id: 'welcome', name: 'Welcome Card', category: 'Community', color: '#3ddc97', description: 'Pesan hangat untuk anggota baru.', message: presetMessage({ title: '✨ Selamat datang!', description: 'Hai {user.mention}, selamat bergabung di **{server.name}**!\n\nBaca peraturan dan kenalan dengan komunitas kami.', color: '#3ddc97', thumbnail: '{user.avatar}', footerText: 'Member baru • {server.memberCount} anggota' }) },
+  { id: 'rules', name: 'Rules Minimal', category: 'Moderation', color: '#35d6ff', description: 'Peraturan singkat yang mudah dibaca.', message: presetMessage({ title: '📚 Peraturan Server', description: '1. Saling menghormati\n2. Tidak spam atau scam\n3. Gunakan channel sesuai topik\n4. Ikuti arahan moderator', color: '#35d6ff', footerText: 'Baca sebelum beraktivitas' }) },
+  { id: 'maintenance', name: 'Maintenance Alert', category: 'Status', color: '#ffb020', description: 'Notifikasi maintenance yang terlihat jelas.', message: presetMessage({ title: '🛠️ Maintenance', description: 'Server sedang dalam pemeliharaan sementara.\n\nMohon tunggu, kami akan kembali secepatnya.', color: '#ffb020', footerText: 'Terima kasih atas pengertiannya', thumbnail: '' }) },
+  { id: 'verification', name: 'Verification Gate', category: 'Security', color: '#7c3aed', description: 'Ajakan verifikasi yang fokus dan rapi.', message: presetMessage({ title: '✅ Verifikasi akun', description: 'Klik tombol berikut untuk menyelesaikan verifikasi dan membuka akses channel.', color: '#7c3aed', footerText: 'Keamanan komunitas adalah prioritas', buttons: [{ label: 'Verifikasi Sekarang', url: 'https://discord.com' }] }) },
+  { id: 'level-up', name: 'Level Up', category: 'Community', color: '#a46bff', description: 'Rayakan progres dan pencapaian member.', message: presetMessage({ title: '🏆 Level Up!', description: 'Selamat {user.mention}! Kamu baru saja mencapai level baru di **{server.name}**.', color: '#a46bff', footerText: 'Keep going • {server.name}', thumbnail: '{user.avatar}' }) },
+  { id: 'poll', name: 'Community Poll', category: 'Interaction', color: '#00a8fc', description: 'Polling singkat dengan tombol aksi.', message: presetMessage({ title: '📊 Poll komunitas', description: 'Menurut kamu, fitur apa yang harus kami buat berikutnya?\n\nTulis pilihanmu di bawah!', color: '#00a8fc', footerText: 'Suara kamu membantu komunitas', buttons: [{ label: 'Beri Pendapat', url: 'https://discord.com' }] }) },
+  { id: 'promo', name: 'Promo Showcase', category: 'Promotion', color: '#f97316', description: 'Promosi produk atau layanan dengan CTA.', message: presetMessage({ title: '🚀 Promo spesial', description: 'Dapatkan penawaran terbaik hari ini. Jangan lewatkan kesempatan terbatas ini!', color: '#f97316', footerText: 'Penawaran terbatas', buttons: [{ label: 'Buka Penawaran', url: 'https://discord.com' }] }) },
+];
+
+const INVITE_TEMPLATES = [
+  { id: 'invite-main', name: 'Portal Komunitas', category: 'Elegant', color: '#8b5cf6', description: 'Undangan premium untuk komunitas utama.', message: presetMessage({ content: 'Punya tempat untuk tumbuh, berbagi, dan bertemu orang-orang baru.', title: '🌌 Selamat datang di rumah kami', description: 'Satu server. Banyak cerita.\n\nBergabunglah dengan komunitas yang hangat, aktif, dan selalu punya ruang untuk kamu.', color: '#8b5cf6', footerText: 'Klik tombol dan mulai petualanganmu', buttons: [{ label: 'Gabung Server', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-gaming', name: 'Gaming Squad', category: 'Gaming', color: '#ff5d7a', description: 'Gaya energik untuk server gaming.', message: presetMessage({ content: 'Mic on. Squad ready. Let the game begin.', title: '🎮 Cari squad terbaikmu', description: 'Temukan teman mabar, ikut turnamen, bagikan setup, dan naik level bersama komunitas gaming kami.', color: '#ff5d7a', footerText: 'Party up • Play together', buttons: [{ label: 'Join the Squad', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-creator', name: 'Creator Lounge', category: 'Creator', color: '#f97316', description: 'Untuk komunitas kreator dan follower.', message: presetMessage({ title: '🎨 Ruang untuk para kreator', description: 'Tempat bertukar ide, memamerkan karya, dan bertumbuh bersama.\n\nKalau kamu suka membuat sesuatu, kamu akan betah di sini.', color: '#f97316', footerText: 'Create • Share • Inspire', buttons: [{ label: 'Masuk ke Lounge', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-study', name: 'Study Together', category: 'Study', color: '#35d6ff', description: 'Undangan tenang untuk komunitas belajar.', message: presetMessage({ title: '📚 Belajar lebih jauh, bersama', description: 'Cari teman belajar, berbagi materi, ikut study session, dan tetap konsisten mencapai targetmu.', color: '#35d6ff', footerText: 'Small steps. Big progress.', buttons: [{ label: 'Mulai Belajar', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-event', name: 'Event Drop', category: 'Event', color: '#ffb020', description: 'CTA kuat untuk promosi event server.', message: presetMessage({ content: 'Satu event. Satu kesempatan. Jangan sampai terlewat.', title: '⚡ Kamu diundang!', description: 'Kami sedang menyiapkan event spesial untuk komunitas. Masuk sekarang agar tidak ketinggalan pengumuman dan hadiah menarik.', color: '#ffb020', footerText: 'Limited time invitation', buttons: [{ label: 'Amankan Tempat', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-chill', name: 'Chill Corner', category: 'Chill', color: '#3ddc97', description: 'Nuansa santai untuk server hangout.', message: presetMessage({ title: '🌿 Take a break with us', description: 'Ngobrol santai, berbagi musik, meme, cerita random, dan menemukan teman baru tanpa tekanan.', color: '#3ddc97', footerText: 'Your cozy corner online', buttons: [{ label: 'Masuk & Santai', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-business', name: 'Professional Hub', category: 'Professional', color: '#2f8cff', description: 'Undangan rapi untuk networking dan bisnis.', message: presetMessage({ title: '💼 Connect with the right people', description: 'Bangun koneksi, bertukar insight, dan temukan peluang baru bersama para profesional di komunitas kami.', color: '#2f8cff', footerText: 'Network with purpose', buttons: [{ label: 'Join Professional Hub', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-friends', name: 'Besties Club', category: 'Friends', color: '#ec4899', description: 'Hangat dan playful untuk komunitas teman.', message: presetMessage({ title: '💖 Pintu kami terbuka untukmu', description: 'Di sini kamu bisa ngobrol, tertawa, dan jadi diri sendiri. Ajak temanmu juga—semakin ramai semakin seru!', color: '#ec4899', footerText: 'Good vibes only', buttons: [{ label: 'Ayo Gabung', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-exclusive', name: 'Exclusive Access', category: 'Exclusive', color: '#a46bff', description: 'Kesan eksklusif untuk member pilihan.', message: presetMessage({ title: '🔐 Your access awaits', description: 'Sebuah ruang eksklusif untuk diskusi, update khusus, dan pengalaman yang tidak kamu temukan di tempat lain.', color: '#a46bff', footerText: 'Invitation only • Welcome in', buttons: [{ label: 'Claim Access', url: 'https://discord.gg/ganti-link-server' }] }) },
+  { id: 'invite-giveaway', name: 'Join & Win', category: 'Giveaway', color: '#06b6d4', description: 'Undangan dengan gaya giveaway yang catchy.', message: presetMessage({ title: '🎁 Join the fun, unlock the chance', description: 'Masuk ke server dan ikuti event komunitas kami. Bisa jadi kamu adalah pemenang berikutnya!', color: '#06b6d4', footerText: 'Good luck & have fun!', buttons: [{ label: 'Ikut Sekarang', url: 'https://discord.gg/ganti-link-server' }] }) },
+];
+
+/* ---------- Preview ---------- */
+const esc = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function md(text) {
+  let t = esc(text);
+  t = t.replace(/`([^`\n]+)`/g, '<code class="i">$1</code>')
+       .replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')
+       .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<i>$2</i>')
+       .replace(/__([^_\n]+)__/g, '<u>$1</u>')
+       .replace(/~~([^~\n]+)~~/g, '<s>$1</s>')
+       .replace(/&lt;(a?):([a-zA-Z0-9_~]+):(\d+)&gt;/g, (_, a, name, id) => `<img class="dc-emoji" src="https://cdn.discordapp.com/emojis/${id}.${a ? 'gif' : 'png'}?size=48" alt=":${name}:" />`)
+       .replace(/\u0001([^\u0002]+)\u0002/g, '<span class="mention">$1</span>');
+  return { __html: t };
+}
+
+function Preview({ message, ctx }) {
+  const sub = (s) => (s || '').replace(/\{([a-zA-Z.]+)\}/g, (m, k) => (k in ctx ? ctx[k] : m));
+  const imgSrc = (s) => { const v = sub(s).trim(); return /^(https?:\/\/|\/uploads\/)/.test(v) ? v : ''; };
+  const e = message.embed || {};
+  const has = e.enabled;
+  const th = has ? imgSrc(e.thumbnail) : '';
+  const big = has ? imgSrc(e.image) : '';
+  const au = has ? imgSrc(e.authorIcon) : '';
+  const fi = has ? imgSrc(e.footerIcon) : '';
+  const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  const buttonEmoji = (button) => button.emoji?.id ? `https://cdn.discordapp.com/emojis/${button.emoji.id}.${button.emoji.animated ? 'gif' : 'png'}?size=32` : '';
+  return (
+    <div className="dc">
+      <div className="dc-msg">
+        <div className="dc-av">{ctx.botAvatar && <img src={ctx.botAvatar} alt="" />}</div>
+        <div className="dc-body">
+          <div className="dc-head"><b>{ctx['bot.name']}</b><span className="dc-tag">APP</span><span className="dc-time">Hari ini pukul {now}</span></div>
+          {message.content && <div className="dc-txt" dangerouslySetInnerHTML={md(sub(message.content))} />}
+          {(message.stickers || []).length > 0 && <div className="media-preview">{message.stickers.slice(0, 3).map((s) => <img key={s.id || s} src={s.url || ''} alt={s.name || 'sticker'} style={{ width: 160, height: 160, objectFit: 'contain' }} />)}</div>}
+          {has && (
+            <div className={'dc-embed' + (th ? ' hasth' : '')} style={{ borderLeftColor: e.color || '#8b5cf6' }}>
+              {sub(e.authorName) && <div className="au">{au && <img src={au} alt="" />}<span>{sub(e.authorName)}</span></div>}
+              {sub(e.title) && <div className={'ti' + (sub(e.titleUrl) ? ' lnk' : '')}>{sub(e.title)}</div>}
+              {sub(e.description) && <div className="de" dangerouslySetInnerHTML={md(sub(e.description))} />}
+              {th && <img className="th" src={th} alt="" />}
+              {(e.fields || []).some((f) => f.name && f.value) && (
+                <div className="fl">
+                  {e.fields.filter((f) => f.name && f.value).map((f, i) => (
+                    <div key={i} className={'f' + (f.inline ? ' inl' : '')}><b>{sub(f.name)}</b><span dangerouslySetInnerHTML={md(sub(f.value))} /></div>
+                  ))}
+                </div>
+              )}
+              {big && <img className="big" src={big} alt="" />}
+              {(sub(e.footerText) || e.timestamp) && (
+                <div className="ft">{fi && <img src={fi} alt="" />}<span>{sub(e.footerText)}{sub(e.footerText) && e.timestamp ? ' • ' : ''}{e.timestamp ? 'Hari ini pukul ' + now : ''}</span></div>
+              )}
+            </div>
+          )}
+          {((message.buttons || []).some((b) => b.label && b.url) || (message.previewActions || []).length > 0) && (
+            <div className="dc-btns">
+              {(message.buttons || []).filter((b) => b.label && b.url).map((b, i) => <span className="dc-btn" key={`link-${i}`}>{buttonEmoji(b) && <img className="dc-emoji" src={buttonEmoji(b)} alt="" />}{sub(b.label)} ↗</span>)}
+              {(message.previewActions || []).map((label, i) => <span className="dc-btn" key={`action-${i}`}>{label}</span>)}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InviteDialog({ url, appUrl, onClose, toast }) {
+  const copyLink = async (link, label) => {
+    try { await navigator.clipboard.writeText(link); toast(`Link ${label} berhasil disalin`, 'ok'); }
+    catch { toast(`Gagal menyalin link ${label}. Salin manual dari kotak link.`, 'err'); }
+  };
+  const shareLink = async (link, label, text) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: label, text, url: link });
+        return;
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+      }
+    }
+    await copyLink(link, label);
+  };
+  return <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="glass modal" role="dialog" aria-modal="true" aria-labelledby="invite-title">
+      <div className="section-title" style={{ marginTop: 0 }}><h3 id="invite-title">Undang atau tambahkan aplikasi</h3><span>Dua jenis pemasangan Discord</span></div>
+      <div className="card-in" style={{ marginBottom: 14 }}>
+        <b>Link yang dibagikan harus dimulai dengan https://discord.com/</b>
+        <p className="hint" style={{ marginBottom: 0 }}>Jangan kirim alamat Embed Studio seperti <code>http://127.0.0.1:3198/invite</code> atau <code>/app-install</code>. Alamat 127.0.0.1 hanya berlaku di perangkatmu. Gunakan tombol Bagikan atau Salin pada tautan Discord di bawah.</p>
+      </div>
+      <div className="card-in">
+        <b>1. Undang bot ke server</b>
+        <p className="hint">Bot dipasang sebagai anggota server. Pilih server yang kamu kelola dan setujui izinnya.</p>
+        <div className="share-row"><input type="url" value={url} readOnly aria-label="Link undangan bot ke server" /><button className="btn primary" onClick={() => copyLink(url, 'undangan server')}>Salin</button></div>
+        <div className="actions" style={{ marginTop: 8 }}>
+          <a className="btn small primary" href={url} target="_blank" rel="noreferrer">Undang bot ke server</a>
+          <button className="btn small" type="button" onClick={() => shareLink(url, 'undangan server', 'Tambahkan bot ini sebagai anggota server Discord:')}>Bagikan ke HP</button>
+        </div>
+      </div>
+      <div className="glass panel" style={{ marginTop: 16, padding: 14 }}>
+        <b>2. Tambahkan aplikasi ke akun pengguna</b>
+        <p className="hint" style={{ margin: '6px 0 10px' }}>Aplikasi dan command tersedia untuk akun Discord pengguna tanpa memasang bot sebagai anggota server. Aktifkan User Install pada Developer Portal → Installation.</p>
+        <div className="share-row"><input type="url" value={appUrl} readOnly aria-label="Link tambah aplikasi ke akun Discord" /><button className="btn" onClick={() => copyLink(appUrl, 'aplikasi pengguna')}>Salin</button></div>
+        <div className="actions" style={{ marginTop: 8 }}>
+          <a className="btn small" href={appUrl} target="_blank" rel="noreferrer">Tambah aplikasi ke akun Discord</a>
+          <button className="btn small" type="button" onClick={() => shareLink(appUrl, 'aplikasi pengguna', 'Tambahkan aplikasi ini ke akun Discord kamu:')}>Bagikan ke HP</button>
+        </div>
+      </div>
+      <div className="actions" style={{ marginTop: 16 }}><span className="hint">Tautan Discord langsung — bisa dikirim lewat WhatsApp, SMS, atau aplikasi lain.</span><span className="spacer" /><button className="btn small" onClick={onClose}>Tutup</button></div>
+    </div>
+  </div>;
+}
+
+function EmojiManager({ guilds, toast }) {
+  const available = (guilds?.guilds || []).filter((guild) => guild.botIn);
+  const [guildId, setGuildId] = useState('');
+  const [source, setSource] = useState('');
+  const [name, setName] = useState('');
+  const [busy, setBusy] = useState(false);
+  const valid = guildId && source.trim();
+  const add = async () => {
+    if (!valid) return toast('Pilih server dan tempel URL atau emoji Discord', 'err');
+    setBusy(true);
+    try {
+      const result = await api(`/api/guilds/${guildId}/emojis`, { method: 'POST', body: { source: source.trim(), name: name.trim() } });
+      toast(`Emoji ${result.emoji.format} berhasil ditambahkan`, 'ok');
+      setSource(''); setName('');
+    } catch (e) { toast(e.message, 'err'); }
+    setBusy(false);
+  };
+  return (
+    <div className="glass panel lobby-tool">
+      <div className="modhead"><div><h3 style={{ margin: 0 }}>Tambah emoji server</h3><span className="hint">Tempel URL PNG/GIF/WEBP atau format emoji Discord, lalu pilih server tujuan.</span></div><span className="badge">MANAGE EXPRESSIONS</span></div>
+      <div className="two">
+        <div className="row"><label>Server tujuan</label><select value={guildId} onChange={(e) => setGuildId(e.target.value)}><option value="">Pilih server yang sudah memasang bot…</option>{available.map((guild) => <option key={guild.id} value={guild.id}>{guild.name}</option>)}</select></div>
+        <div className="row"><label>Nama emoji (opsional)</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="contoh: verified_daxia" maxLength="32" /></div>
+      </div>
+      <div className="row"><label>URL gambar / emoji Discord</label><input type="url" value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://cdn.discordapp.com/emojis/…?size=44&animated=true" /></div>
+      <div className="actions"><button className="btn primary" disabled={!valid || busy} onClick={add}>{busy ? 'Menambahkan…' : 'Tambah ke server'}</button><span className="hint">Bot harus punya izin Kelola Ekspresi dan gambar harus bisa diakses publik.</span></div>
+      {!available.length && <div className="empty">Belum ada server yang memasang bot. Tambahkan bot dulu agar emoji bisa dibuat.</div>}
+    </div>
+  );
+}
+
+/* ---------- Editor ---------- */
+function ImageField({ value, onChange, k, toast }) {
+  const ref = useRef();
+  const up = async (file) => {
+    if (!file) return;
+    const fd = new FormData(); fd.append('file', file);
+    try { const r = await api('/api/upload', { method: 'POST', body: fd }); onChange(r.url); toast('Gambar terunggah', 'ok'); }
+    catch (e) { toast(e.message, 'err'); }
+  };
+  return (
+    <div className="imgf">
+      <input type="text" data-k={k} value={value} onChange={(e) => onChange(e.target.value)} placeholder="https://… atau {user.avatar}" />
+      <button type="button" className="btn small" onClick={() => ref.current.click()}>Unggah</button>
+      <input ref={ref} type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden onChange={(e) => { up(e.target.files[0]); e.target.value = ''; }} />
+    </div>
+  );
+}
+
+function Editor({ message, onChange, toast, assets }) {
+  const e = message.embed;
+  const setE = (patch) => onChange({ ...message, embed: { ...e, ...patch } });
+  const setM = (patch) => onChange({ ...message, ...patch });
+
+  // Sisipkan teks di posisi kursor kolom yang sedang aktif.
+  const insertText = (v) => {
+    const el = document.activeElement;
+    const key = el && el.dataset && el.dataset.k;
+    if (key && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
+      const pos = el.selectionStart ?? el.value.length;
+      const next = el.value.slice(0, pos) + v + el.value.slice(el.selectionEnd ?? pos);
+      if (key === 'content') setM({ content: next });
+      else setE({ [key]: next });
+      requestAnimationFrame(() => { el.focus(); el.setSelectionRange(pos + v.length, pos + v.length); });
+    } else {
+      setE({ description: (e.description || '') + v });
+    }
+  };
+  const insertVar = (v) => insertText(v);
+
+  const setField = (i, patch) => setE({ fields: e.fields.map((f, j) => (j === i ? { ...f, ...patch } : f)) });
+  const setBtn = (i, patch) => setM({ buttons: message.buttons.map((b, j) => (j === i ? { ...b, ...patch } : b)) });
+
+  return (
+    <div className="glass panel">
+      <h3>Isi pesan</h3>
+      <div className="row">
+        <label>Variabel (klik untuk menyisipkan di kolom yang sedang aktif)</label>
+        <div className="vars">{VARIABLES.map((v) => <button type="button" key={v} className="var" onMouseDown={(ev) => ev.preventDefault()} onClick={() => insertVar(v)}>{v}</button>)}</div>
+      </div>
+      <div className="row">
+        <label>Teks di atas embed (opsional)</label>
+        <textarea data-k="content" value={message.content} onChange={(ev) => setM({ content: ev.target.value })} placeholder="Contoh: Halo {user.mention}!" />
+      </div>
+      <div className="row">
+        <label>Emoji server (klik untuk menambahkan ke teks)</label>
+        <div className="asset-grid">
+          {(assets?.emojis || []).map((emoji) => <button type="button" className="asset" key={emoji.id} title={emoji.format} onMouseDown={(ev) => ev.preventDefault()} onClick={() => insertText(emoji.format)}><img src={emoji.url} alt={emoji.format} /><span>{emoji.name}</span></button>)}
+          {!assets?.emojis?.length && <span className="hint">Belum ada emoji custom di server ini.</span>}
+        </div>
+      </div>
+      <div className="row">
+        <label>Sticker server (maksimal 3 per pesan)</label>
+        <div className="asset-grid">
+          {(assets?.stickers || []).map((sticker) => {
+            const selected = (message.stickers || []).some((s) => (s.id || s) === sticker.id);
+            return <button type="button" className="asset" key={sticker.id} title={sticker.description || sticker.name} disabled={selected || (message.stickers || []).length >= 3} onClick={() => setM({ stickers: [...(message.stickers || []), sticker] })}><img src={sticker.url} alt={sticker.name} /><span>{selected ? '✓ ' : ''}{sticker.name}</span></button>;
+          })}
+          {!assets?.stickers?.length && <span className="hint">Belum ada sticker server yang bisa dipakai.</span>}
+        </div>
+        {(message.stickers || []).length > 0 && <div className="actions" style={{ marginTop: 8 }}>{message.stickers.map((sticker, i) => <button type="button" className="btn small danger" key={sticker.id || i} onClick={() => setM({ stickers: message.stickers.filter((_, j) => j !== i) })}>Hapus {sticker.name || 'sticker'}</button>)}</div>}
+      </div>
+      <div className="row">
+        <label>GIF / PNG / gambar di pesan</label>
+        {(message.media || []).map((item, i) => <div className="card-in" key={i}>
+          <ImageField k={'media-' + i} value={item.url} onChange={(url) => setM({ media: message.media.map((m, j) => j === i ? { ...m, url } : m) })} toast={toast} />
+          <div className="two" style={{ marginTop: 8 }}>
+            <select value={item.position || 'message'} onChange={(ev) => setM({ media: message.media.map((m, j) => j === i ? { ...m, position: ev.target.value } : m) })}>
+              <option value="message">Media terpisah di pesan</option>
+              <option value="image">Gambar besar di embed</option>
+              <option value="thumbnail">Thumbnail kanan atas</option>
+            </select>
+            <button type="button" className="btn small danger" onClick={() => setM({ media: message.media.filter((_, j) => j !== i) })}>Hapus media</button>
+          </div>
+        </div>)}
+        {(message.media || []).length < 10 && <button type="button" className="btn small" onClick={() => setM({ media: [...(message.media || []), { url: '' }] })}>Tambah GIF / PNG</button>}
+        <span className="hint">Bisa tempel URL https:// atau unggah file GIF, PNG, JPG, WEBP maksimal 8 MB.</span>
+      </div>
+      <div className="hr" />
+      <label className="toggle"><input type="checkbox" checked={e.enabled} onChange={(ev) => setE({ enabled: ev.target.checked })} /> Gunakan embed</label>
+      {e.enabled && (<>
+        <div style={{ height: 14 }} />
+        <div className="two">
+          <div className="row"><label>Nama author</label><input type="text" data-k="authorName" value={e.authorName} onChange={(ev) => setE({ authorName: ev.target.value })} /></div>
+          <div className="row"><label>Ikon author</label><ImageField k="authorIcon" value={e.authorIcon} onChange={(v) => setE({ authorIcon: v })} toast={toast} /></div>
+        </div>
+        <div className="two">
+          <div className="row"><label>Judul</label><input type="text" data-k="title" value={e.title} onChange={(ev) => setE({ title: ev.target.value })} /></div>
+          <div className="row"><label>Tautan judul (opsional)</label><input type="url" data-k="titleUrl" value={e.titleUrl} onChange={(ev) => setE({ titleUrl: ev.target.value })} placeholder="https://" /></div>
+        </div>
+        <div className="row"><label>Deskripsi</label><textarea data-k="description" value={e.description} onChange={(ev) => setE({ description: ev.target.value })} /></div>
+        <div className="row">
+          <label>Warna embed</label>
+          <div className="sw">
+            <input type="color" value={e.color} onChange={(ev) => setE({ color: ev.target.value })} aria-label="Pilih warna" />
+            <input type="text" value={e.color} onChange={(ev) => setE({ color: ev.target.value })} style={{ width: 110 }} />
+            {COLORS.map((c) => <button type="button" key={c} className={'chip' + (e.color === c ? ' on' : '')} style={{ background: c }} onClick={() => setE({ color: c })} aria-label={c} />)}
+          </div>
+        </div>
+        <div className="two">
+          <div className="row"><label>Thumbnail (kecil, kanan atas)</label><ImageField k="thumbnail" value={e.thumbnail} onChange={(v) => setE({ thumbnail: v })} toast={toast} /></div>
+          <div className="row"><label>Gambar besar</label><ImageField k="image" value={e.image} onChange={(v) => setE({ image: v })} toast={toast} /></div>
+        </div>
+        <div className="two">
+          <div className="row"><label>Teks footer</label><input type="text" data-k="footerText" value={e.footerText} onChange={(ev) => setE({ footerText: ev.target.value })} /></div>
+          <div className="row"><label>Ikon footer</label><ImageField k="footerIcon" value={e.footerIcon} onChange={(v) => setE({ footerIcon: v })} toast={toast} /></div>
+        </div>
+        <label className="toggle"><input type="checkbox" checked={e.timestamp} onChange={(ev) => setE({ timestamp: ev.target.checked })} /> Tampilkan waktu kirim</label>
+
+        <div className="hr" />
+        <h3>Kolom (field)</h3>
+        {e.fields.map((f, i) => (
+          <div className="card-in" key={i}>
+            <div className="two">
+              <input type="text" data-k={'f-n-' + i} placeholder="Judul kolom" value={f.name} onChange={(ev) => setField(i, { name: ev.target.value })} />
+              <input type="text" placeholder="Isi kolom" value={f.value} onChange={(ev) => setField(i, { value: ev.target.value })} />
+            </div>
+            <div className="actions" style={{ marginTop: 8 }}>
+              <label className="toggle"><input type="checkbox" checked={f.inline} onChange={(ev) => setField(i, { inline: ev.target.checked })} /> Sejajar</label>
+              <span className="spacer" />
+              <button type="button" className="btn small danger" onClick={() => setE({ fields: e.fields.filter((_, j) => j !== i) })}>Hapus</button>
+            </div>
+          </div>
+        ))}
+        {e.fields.length < 25 && <button type="button" className="btn small" onClick={() => setE({ fields: [...e.fields, { name: '', value: '', inline: false }] })}>Tambah kolom</button>}
+      </>)}
+
+      <div className="hr" />
+      <h3>Tombol tautan</h3>
+      {message.buttons.map((b, i) => (
+        <div className="card-in" key={i}>
+          <div className="two">
+            <input type="text" placeholder="Teks tombol" value={b.label} onChange={(ev) => setBtn(i, { label: ev.target.value })} />
+            <input type="url" placeholder="https://" value={b.url} onChange={(ev) => setBtn(i, { url: ev.target.value })} />
+          </div>
+          <div className="row" style={{ marginTop: 10, marginBottom: 0 }}>
+            <label>Ikon tombol (emoji server)</label>
+            <select value={b.emoji?.id || ''} onChange={(ev) => { const emoji = (assets?.emojis || []).find((item) => item.id === ev.target.value); setBtn(i, { emoji: emoji ? { id: emoji.id, name: emoji.name, animated: emoji.animated } : null }); }}>
+              <option value="">Tanpa ikon</option>
+              {(assets?.emojis || []).map((emoji) => <option key={emoji.id} value={emoji.id}>{emoji.animated ? 'GIF emoji' : 'Emoji'} — {emoji.name}</option>)}
+            </select>
+            <span className="hint">Discord hanya menerima emoji pada ikon tombol. GIF/sticker tidak bisa menjadi ikon tombol native.</span>
+          </div>
+          <div style={{ marginTop: 8 }}><button type="button" className="btn small danger" onClick={() => setM({ buttons: message.buttons.filter((_, j) => j !== i) })}>Hapus</button></div>
+        </div>
+      ))}
+      {message.buttons.length < 5 && <button type="button" className="btn small" onClick={() => setM({ buttons: [...message.buttons, { label: '', url: '' }] })}>Tambah tombol</button>}
+    </div>
+  );
+}
+
+/* ---------- Tabs ---------- */
+function SendTab({ guild, channels, message, setMessage, ctx, toast, reloadTemplates, assets }) {
+  const [channelId, setChannelId] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [tplName, setTplName] = useState('');
+
+  const send = async () => {
+    setBusy(true);
+    try { await api(`/api/guilds/${guild.id}/send`, { method: 'POST', body: { channelId, message } }); toast('Pesan terkirim', 'ok'); }
+    catch (e) { toast(e.message, 'err'); }
+    setBusy(false);
+  };
+  const saveTpl = async () => {
+    try { await api(`/api/guilds/${guild.id}/templates`, { method: 'POST', body: { name: tplName, message } }); setTplName(''); reloadTemplates(); toast('Template disimpan', 'ok'); }
+    catch (e) { toast(e.message, 'err'); }
+  };
+
+  return (
+    <div className="cols">
+      <div>
+        <div className="glass panel" style={{ marginBottom: 20 }}>
+          <h3>Kirim ke channel</h3>
+          <div className="row">
+            <select value={channelId} onChange={(e) => setChannelId(e.target.value)}>
+              <option value="">Pilih channel…</option>
+              {channels.map((c) => <option key={c.id} value={c.id}>#{c.name}</option>)}
+            </select>
+          </div>
+          <div className="actions">
+            <button className="btn primary" disabled={!channelId || busy} onClick={send}>{busy ? 'Mengirim…' : 'Kirim pesan'}</button>
+            <span className="spacer" />
+            <input type="text" placeholder="Nama template" value={tplName} onChange={(e) => setTplName(e.target.value)} style={{ width: 160 }} />
+            <button className="btn" disabled={!tplName.trim()} onClick={saveTpl}>Simpan template</button>
+          </div>
+        </div>
+        <Editor message={message} onChange={setMessage} toast={toast} assets={assets} />
+      </div>
+      <div className="preview"><h3 style={{ marginBottom: 12 }}>Pratinjau</h3><Preview message={message} ctx={ctx} />
+        <p className="hint">Pratinjau memakai data contoh. Saat dikirim, variabel diganti data asli server. @everyone dan @here tidak akan terpicu.</p></div>
+    </div>
+  );
+}
+
+function DmTab({ guild, message, setMessage, ctx, toast, assets }) {
+  const [userId, setUserId] = useState('');
+  const [busy, setBusy] = useState(false);
+  const valid = /^\d{17,20}$/.test(userId.trim());
+
+  const send = async () => {
+    if (!valid) return toast('Tempel User ID Discord yang valid', 'err');
+    setBusy(true);
+    try {
+      const result = await api('/api/dm', { method: 'POST', body: { userId: userId.trim(), guildId: guild.id, message } });
+      toast(`DM terkirim ke ${result.user?.tag || result.user?.username || userId.trim()}`, 'ok');
+    } catch (e) { toast(e.message, 'err'); }
+    setBusy(false);
+  };
+
+  return (
+    <div className="cols">
+      <div>
+        <div className="glass panel" style={{ marginBottom: 20 }}>
+          <div className="modhead">
+            <div><h3 style={{ margin: 0 }}>Kirim DM ke user</h3><span className="hint">Tempel User ID Discord, lalu gunakan editor pesan di bawah.</span></div>
+          </div>
+          <div className="row">
+            <label>User ID Discord</label>
+            <input type="text" inputMode="numeric" value={userId} onChange={(e) => setUserId(e.target.value.replace(/\D/g, '').slice(0, 20))} placeholder="Contoh: 892048241753993216" />
+          </div>
+          <div className="actions">
+            <button className="btn primary" disabled={!valid || busy} onClick={send}>{busy ? 'Mengirim…' : 'Kirim DM sekarang'}</button>
+            <span className="hint">Target harus bisa menerima DM dari bot.</span>
+          </div>
+        </div>
+        <Editor message={message} onChange={setMessage} toast={toast} assets={assets} />
+      </div>
+      <div className="preview"><h3 style={{ marginBottom: 12 }}>Pratinjau DM</h3><Preview message={message} ctx={ctx} />
+        <p className="hint">Editor ini mendukung teks, embed, gambar/GIF, sticker, emoji server, dan tombol link. Variabel server memakai server terpilih.</p></div>
+    </div>
+  );
+}
+
+function ModuleTab({ guild, kind, title, channels, ctx, toast, assets }) {
+  const [cfg, setCfg] = useState(null);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setCfg(null); api(`/api/guilds/${guild.id}/settings`).then((s) => setCfg(s[kind])).catch((e) => toast(e.message, 'err')); }, [guild.id, kind]);
+  if (!cfg) return <div className="empty">Memuat…</div>;
+  const save = async () => {
+    setBusy(true);
+    try { await api(`/api/guilds/${guild.id}/settings/${kind}`, { method: 'PUT', body: cfg }); toast('Pengaturan disimpan', 'ok'); }
+    catch (e) { toast(e.message, 'err'); }
+    setBusy(false);
+  };
+  return (
+    <div className="cols">
+      <div>
+        <div className="glass panel" style={{ marginBottom: 20 }}>
+          <div className="modhead">
+            <h3 style={{ margin: 0 }}>{title}</h3><span className="spacer" />
+            <label className="toggle"><input type="checkbox" checked={cfg.enabled} onChange={(e) => setCfg({ ...cfg, enabled: e.target.checked })} /> {cfg.enabled ? 'Aktif' : 'Nonaktif'}</label>
+          </div>
+          <div className="row"><label>Channel tujuan</label>
+            <select value={cfg.channelId} onChange={(e) => setCfg({ ...cfg, channelId: e.target.value })}>
+              <option value="">Pilih channel…</option>
+              {channels.map((c) => <option key={c.id} value={c.id}>#{c.name}</option>)}
+            </select>
+          </div>
+          <button className="btn primary" disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : 'Simpan pengaturan'}</button>
+        </div>
+        <Editor message={cfg.message} onChange={(m) => setCfg({ ...cfg, message: m })} toast={toast} assets={assets} />
+      </div>
+      <div className="preview"><h3 style={{ marginBottom: 12 }}>Pratinjau</h3><Preview message={cfg.message} ctx={ctx} />
+        <p className="hint">Pesan dikirim otomatis setiap ada anggota {kind === 'welcome' ? 'baru yang bergabung' : 'yang keluar'}. Tersimpan permanen sampai kamu ubah.</p></div>
+    </div>
+  );
+}
+
+function commandPreviewMessage(type, config) {
+  const { messages, economy, profileCard } = config;
+  const embedMessage = ({ authorName = '', authorIcon = '', title = '', description = '', color = '#8b5cf6', footerText = '', image = '', thumbnail = '', fields = [], timestamp = false, previewActions = [] }) => ({
+    content: '',
+    media: [],
+    stickers: [],
+    buttons: [],
+    previewActions,
+    embed: {
+      enabled: true,
+      authorName,
+      authorIcon,
+      title,
+      titleUrl: '',
+      description,
+      color,
+      thumbnail,
+      image,
+      footerText,
+      footerIcon: '',
+      timestamp,
+      fields,
+    },
+  });
+  const slotFields = [
+    { name: messages.slotBetLabel, value: '**Rp. 100**', inline: true },
+    { name: messages.slotBalanceLabel, value: '**Rp. 125.000**', inline: true },
+    { name: messages.slotPrizeLabel, value: `**3 sama = ${economy.tripleMultiplier}×**\n**2 sama = ${economy.pairMultiplier}×**`, inline: true },
+  ];
+
+  if (type === 'slot-spin') {
+    return {
+      content: String(messages.slotSpinStatus || '')
+        .replaceAll('{numbers}', '7  |  7  |  3')
+        .replaceAll('{frame}', '2'),
+      embed: { enabled: false },
+      stickers: [],
+      buttons: [],
+    };
+  }
+  if (type === 'slot-spinning') {
+    return embedMessage({
+      authorName: 'DÀXIA ARCADE  •  SLOT ROOM',
+      authorIcon: '{bot.avatar}',
+      title: messages.slotSpinningTitle,
+      description: `**${messages.slotHeading}**\n\n\`\`\`\n╔══════════════════════╗\n║    〔 7 〕 〔 3 〕 〔 9 〕    ║\n╚══════════════════════╝\n\`\`\`\n⏳ Roda sedang berputar…`,
+      color: profileCard.colors.slotSpinning,
+      footerText: messages.slotSpinningFooter,
+      fields: slotFields,
+      timestamp: true,
+      previewActions: ['BET Rp. 100', '● SPINNING'],
+    });
+  }
+  if (type === 'slot-limit') {
+    return { content: messages.slotMaxBetMessage, embed: { enabled: false }, stickers: [], buttons: [] };
+  }
+  if (type === 'slot-balance') {
+    return { content: messages.slotInsufficientBalance, embed: { enabled: false }, stickers: [], buttons: [] };
+  }
+  if (type === 'slot-running') {
+    return { content: messages.slotRunningMessage, embed: { enabled: false }, stickers: [], buttons: [] };
+  }
+  if (['slot-jackpot', 'slot-pair', 'slot-loss'].includes(type)) {
+    const outcome = type === 'slot-jackpot'
+      ? { text: messages.slotJackpot, color: profileCard.colors.slotJackpot }
+      : type === 'slot-pair'
+        ? { text: messages.slotPair, color: profileCard.colors.slotPair }
+        : { text: messages.slotLoss, color: profileCard.colors.slotLoss };
+    return embedMessage({
+      authorName: 'DÀXIA ARCADE  •  SLOT ROOM',
+      authorIcon: '{bot.avatar}',
+      title: messages.slotTitle,
+      description: `**${messages.slotHeading}**\n\n\`\`\`\n╔══════════════════════╗\n║    〔 7 〕 〔 7 〕 〔 3 〕    ║\n╚══════════════════════╝\n\`\`\`\n${outcome.text}`,
+      color: outcome.color,
+      footerText: messages.slotFooter,
+      fields: slotFields,
+      timestamp: true,
+      previewActions: ['BET Rp. 100', type === 'slot-jackpot' ? '✓ JACKPOT' : type === 'slot-pair' ? '✓ MENANG' : '✓ RESULT'],
+    });
+  }
+  if (type === 'balance') {
+    return embedMessage({
+      title: messages.balanceTitle,
+      description: messages.balanceDescription,
+      color: profileCard.colors.balanceEmbed,
+      footerText: messages.balanceFooter,
+    });
+  }
+  if (type === 'daily') {
+    return embedMessage({
+      title: messages.dailyTitle,
+      description: messages.dailyDescription,
+      color: profileCard.colors.dailyEmbed,
+      footerText: messages.dailyFooter,
+      fields: [
+        { name: messages.dailyBalanceLabel, value: '**Rp. 126.000**', inline: true },
+        { name: messages.dailyNextLabel, value: '<t:1793296800:R>', inline: true },
+      ],
+    });
+  }
+  if (type === 'daily-wait') {
+    return { content: messages.dailyWaitMessage, embed: { enabled: false }, stickers: [], buttons: [] };
+  }
+  if (type === 'leaderboard') {
+    return embedMessage({
+      title: messages.leaderboardTitle,
+      description: [
+        '🥇 <@123456789012345678> — **Rp. 250.000**',
+        '🥈 <@234567890123456789> — **Rp. 180.000**',
+        '🥉 <@345678901234567890> — **Rp. 125.000**',
+      ].join('\n'),
+      color: profileCard.colors.leaderboardEmbed,
+      footerText: messages.leaderboardFooter,
+    });
+  }
+  if (type === 'leaderboard-empty') {
+    return embedMessage({
+      title: messages.leaderboardTitle,
+      description: messages.leaderboardEmpty,
+      color: profileCard.colors.leaderboardEmbed,
+      footerText: messages.leaderboardFooter,
+    });
+  }
+  if (type === 'profile') {
+    return embedMessage({
+      authorName: messages.profileAuthor,
+      authorIcon: '{server.icon}',
+      title: messages.profileTitle,
+      description: messages.profileDescription,
+      color: profileCard.colors.profileEmbed,
+      footerText: messages.profileFooter,
+      image: 'https://media.giphy.com/media/8dgihcMeMPRV0VDEvV/giphy.gif',
+      thumbnail: '{user.avatar}',
+      fields: [
+        { name: messages.profileStatusLabel, value: messages.profileStatusValue, inline: true },
+        { name: messages.profileDurationLabel, value: messages.profileDurationValue, inline: true },
+        { name: messages.profileActivityLabel, value: messages.profileActivityValue, inline: true },
+        { name: messages.profileRolesLabel, value: messages.profileRolesValue, inline: false },
+        { name: messages.profileAccountLabel, value: messages.profileAccountValue, inline: true },
+        { name: messages.profileStatsLabel, value: messages.profileStatsValue, inline: true },
+      ],
+      timestamp: true,
+    });
+  }
+  if (type === 'profile-limited') {
+    return embedMessage({
+      authorName: messages.profileAuthor,
+      authorIcon: '{server.icon}',
+      title: messages.profileTitle,
+      description: messages.profileDescription,
+      color: profileCard.colors.profileEmbed,
+      footerText: messages.profileFooter,
+      image: 'https://media.giphy.com/media/8dgihcMeMPRV0VDEvV/giphy.gif',
+      thumbnail: '{user.avatar}',
+      fields: [
+        { name: messages.profileStatusLabel, value: 'Data status terbatas pada user-install', inline: true },
+        { name: messages.profileDurationLabel, value: 'Data terbatas pada user-install', inline: true },
+        { name: messages.profileActivityLabel, value: messages.profileActivityValue, inline: true },
+        { name: messages.profileRolesLabel, value: messages.profileRolesValue, inline: false },
+        { name: messages.profileAccountLabel, value: messages.profileAccountValue, inline: true },
+        { name: messages.profileStatsLabel, value: messages.profileLimitedStatsValue, inline: true },
+      ],
+      timestamp: true,
+    });
+  }
+  return embedMessage({
+    authorName: '東方  •  DÀXIA FIELD GUIDE',
+    authorIcon: '{bot.avatar}',
+    title: messages.helpTitle,
+    description: `${messages.helpDescription}\n\n${messages.helpContent}`,
+    color: profileCard.colors.helpEmbed,
+    footerText: messages.helpFooter,
+    image: 'https://media.giphy.com/media/8dgihcMeMPRV0VDEvV/giphy.gif',
+    thumbnail: '{bot.avatar}',
+    timestamp: true,
+  });
+}
+
+function CommandSettingsTab({ guild, toast, ctx }) {
+  const [config, setConfig] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [previewType, setPreviewType] = useState('slot-pair');
+  const [profileCardPreview, setProfileCardPreview] = useState('');
+  const [profileCardPreviewBusy, setProfileCardPreviewBusy] = useState(false);
+  const profileCardPreviewUrl = useRef('');
+  const labels = {
+    slotTitle: 'Judul hasil slot', slotSpinningTitle: 'Judul saat slot berputar', slotHeading: 'Heading slot',
+    slotBetLabel: 'Label taruhan', slotBalanceLabel: 'Label saldo', slotPrizeLabel: 'Label hadiah',
+    slotSpinningFooter: 'Footer saat berputar', slotFooter: 'Footer hasil slot', slotSpinStatus: 'Pesan animasi spin',
+    slotJackpot: 'Pesan jackpot', slotPair: 'Pesan dua angka sama', slotLoss: 'Pesan kalah',
+    slotRunningMessage: 'Pesan taruhan masih berjalan', slotInsufficientBalance: 'Pesan saldo tidak cukup',
+    slotMaxBetMessage: 'Pesan batas taruhan', balanceTitle: 'Judul saldo', balanceDescription: 'Isi pesan saldo',
+    balanceFooter: 'Footer saldo', dailyTitle: 'Judul daily', dailyDescription: 'Isi pesan hadiah daily',
+    dailyBalanceLabel: 'Label saldo setelah klaim', dailyNextLabel: 'Label waktu klaim berikutnya',
+    dailyWaitMessage: 'Pesan cooldown daily', dailyFooter: 'Footer daily', leaderboardTitle: 'Judul leaderboard',
+    leaderboardEmpty: 'Pesan leaderboard kosong', leaderboardFooter: 'Footer leaderboard',
+    profileAuthor: 'Author profil server', profileTitle: 'Judul profil', profileDescription: 'Deskripsi profil',
+    profileStatusLabel: 'Label status', profileDurationLabel: 'Label lama di server',
+    profileActivityLabel: 'Label level aktivitas', profileRolesLabel: 'Label role',
+    profileAccountLabel: 'Label akun Discord', profileStatsLabel: 'Label statistik server',
+    profileStatusValue: 'Isi status', profileDurationValue: 'Isi lama di server',
+    profileActivityValue: 'Isi level aktivitas', profileRolesValue: 'Isi daftar role',
+    profileAccountValue: 'Isi akun Discord', profileStatsValue: 'Isi statistik server',
+    profileLimitedStatsValue: 'Statistik terbatas (user-install)', profileFooter: 'Footer profil',
+    helpTitle: 'Judul panduan', helpDescription: 'Deskripsi panduan', helpContent: 'Konten panduan lengkap',
+    helpFooter: 'Footer panduan',
+  };
+  const economyLabels = {
+    dailyReward: 'Hadiah daily (Rupiah)', defaultBet: 'Taruhan default', maxBet: 'Taruhan maksimum',
+    pairMultiplier: 'Pengali dua angka sama', tripleMultiplier: 'Pengali jackpot tiga angka',
+  };
+  const cardLabels = {
+    title: 'Judul kartu', subtitle: 'Subjudul kartu', statsTitle: 'Judul statistik server',
+    periodLabel: 'Label periode statistik', weeklyLabel: 'Label pesan 7 hari', monthlyLabel: 'Label pesan 30 hari',
+    activeDaysLabel: 'Label hari aktif', serversLabel: 'Label jumlah server', totalLabel: 'Label total pesan',
+    balanceLabel: 'Label saldo slot', accountLabel: 'Label akun Discord', firstMessageLabel: 'Label pesan pertama',
+    lastActiveLabel: 'Label aktivitas terakhir', emptyMessage: 'Pesan saat belum ada aktivitas',
+    recentCountPrefix: 'Label hitungan 30 hari', totalCountPrefix: 'Label jumlah total',
+    messagesUnit: 'Satuan pesan', channelEmpty: 'Pesan jika channel belum tercatat', idPrefix: 'Awalan ID Discord',
+    trackedFooter: 'Footer saat statistik tersedia', noHistoryFooter: 'Footer saat riwayat belum ada', brand: 'Teks brand kartu',
+  };
+  const textGroups = [
+    { title: 'Slot', keys: ['slotTitle', 'slotSpinningTitle', 'slotHeading', 'slotBetLabel', 'slotBalanceLabel', 'slotPrizeLabel', 'slotSpinningFooter', 'slotFooter', 'slotSpinStatus', 'slotJackpot', 'slotPair', 'slotLoss', 'slotRunningMessage', 'slotInsufficientBalance', 'slotMaxBetMessage'] },
+    { title: 'Saldo dan ekonomi', keys: ['balanceTitle', 'balanceDescription', 'balanceFooter', 'dailyTitle', 'dailyDescription', 'dailyBalanceLabel', 'dailyNextLabel', 'dailyWaitMessage', 'dailyFooter', 'leaderboardTitle', 'leaderboardEmpty', 'leaderboardFooter'] },
+    { title: 'Profil dan bantuan', keys: ['profileAuthor', 'profileTitle', 'profileDescription', 'profileStatusLabel', 'profileDurationLabel', 'profileActivityLabel', 'profileRolesLabel', 'profileAccountLabel', 'profileStatsLabel', 'profileStatusValue', 'profileDurationValue', 'profileActivityValue', 'profileRolesValue', 'profileAccountValue', 'profileStatsValue', 'profileLimitedStatsValue', 'profileFooter', 'helpTitle', 'helpDescription', 'helpContent', 'helpFooter'] },
+  ];
+
+  useEffect(() => {
+    setConfig(null);
+    setProfileCardPreview('');
+    if (profileCardPreviewUrl.current) {
+      URL.revokeObjectURL(profileCardPreviewUrl.current);
+      profileCardPreviewUrl.current = '';
+    }
+    api(`/api/guilds/${guild.id}/command-settings`).then(setConfig).catch((e) => toast(e.message, 'err'));
+    return () => {
+      if (profileCardPreviewUrl.current) {
+        URL.revokeObjectURL(profileCardPreviewUrl.current);
+        profileCardPreviewUrl.current = '';
+      }
+    };
+  }, [guild.id]);
+
+  const setEconomy = (key, value) => setConfig((current) => ({ ...current, economy: { ...current.economy, [key]: value } }));
+  const setMessage = (key, value) => setConfig((current) => ({ ...current, messages: { ...current.messages, [key]: value } }));
+  const clearProfileCardPreview = () => {
+    if (profileCardPreviewUrl.current) URL.revokeObjectURL(profileCardPreviewUrl.current);
+    profileCardPreviewUrl.current = '';
+    setProfileCardPreview('');
+  };
+  const setCard = (key, value) => {
+    clearProfileCardPreview();
+    setConfig((current) => ({ ...current, profileCard: { ...current.profileCard, [key]: value } }));
+  };
+  const setCardColor = (key, value) => {
+    clearProfileCardPreview();
+    setConfig((current) => ({
+      ...current,
+      profileCard: { ...current.profileCard, colors: { ...current.profileCard.colors, [key]: value } },
+    }));
+  };
+  const save = async () => {
+    setBusy(true);
+    try {
+      const result = await api(`/api/guilds/${guild.id}/command-settings`, { method: 'PUT', body: config });
+      setConfig(result);
+      toast('Pengaturan command Dàxia disimpan', 'ok');
+    } catch (e) {
+      toast(e.message, 'err');
+    } finally {
+      setBusy(false);
+    }
+  };
+  const previewProfileCard = async () => {
+    setProfileCardPreviewBusy(true);
+    try {
+      const response = await fetch(`/api/guilds/${guild.id}/command-settings/profile-preview`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileCard: config.profileCard }),
+      });
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || 'Pratinjau GIF /fp gagal dibuat.');
+      }
+      const image = await response.blob();
+      if (image.type !== 'image/gif') throw new Error('Server tidak mengembalikan pratinjau GIF yang valid.');
+      const url = URL.createObjectURL(image);
+      if (profileCardPreviewUrl.current) URL.revokeObjectURL(profileCardPreviewUrl.current);
+      profileCardPreviewUrl.current = url;
+      setProfileCardPreview(url);
+    } catch (error) {
+      toast(error.message, 'err');
+    } finally {
+      setProfileCardPreviewBusy(false);
+    }
+  };
+
+  if (!config) return <div className="empty">Memuat pengaturan command…</div>;
+  const previewCtx = {
+    ...ctx,
+    'user.avatar': ctx['user.avatar'] || '',
+    'bot.avatar': ctx.botAvatar || '',
+    userId: '123456789012345678',
+    balance: 'Rp. 125.000',
+    reward: 'Rp. 1.000',
+    next: '1793296800',
+    bet: 'Rp. 100',
+    payout: 'Rp. 200',
+    maxBet: 'Rp. 100 triliun',
+    frame: '2',
+    numbers: '7  |  7  |  3',
+    serverName: guild.name,
+    displayName: ctx['user.name'],
+    status: '🟢 Online',
+    onlineCount: '42',
+    duration: '12 hari',
+    joinedDate: '17 Oktober 2026',
+    level: '7',
+    progressBar: '▰▰▰▰▰▰▱▱▱▱',
+    messages: '256',
+    roles: '@Admin @Member',
+    createdTimestamp: '1700000000',
+    memberCount: String(guild.memberCount || 128),
+    channelCount: '18',
+  };
+  const previewOptions = [
+    ['slot-spinning', 'Slot • embed saat berputar'],
+    ['slot-spin', 'Slot • teks animasi putaran'],
+    ['slot-jackpot', 'Slot • hasil jackpot'],
+    ['slot-pair', 'Slot • hasil dua angka sama'],
+    ['slot-loss', 'Slot • hasil kalah'],
+    ['slot-limit', 'Slot • taruhan melewati batas'],
+    ['slot-balance', 'Slot • saldo tidak cukup'],
+    ['slot-running', 'Slot • taruhan sedang berjalan'],
+    ['balance', '/daxia balance'],
+    ['daily', '/daxia daily • berhasil'],
+    ['daily-wait', '/daxia daily • cooldown'],
+    ['leaderboard', '/daxia leaderboard'],
+    ['leaderboard-empty', '/daxia leaderboard • belum ada saldo'],
+    ['profile', '/infodaxia / profiledaxia'],
+    ['profile-limited', 'Profil • data user-install terbatas'],
+    ['help', '/daxia-help'],
+  ];
+  const previewMessage = commandPreviewMessage(previewType, config);
+  const renderTextField = (key) => (
+    <div className="row" key={key}>
+      <label>{labels[key] || key}</label>
+      {config.messages[key].length > 100 || ['slotSpinStatus', 'helpContent', 'profileDescription'].includes(key)
+        ? <textarea rows={key === 'helpContent' ? 12 : 4} value={config.messages[key]} onChange={(e) => setMessage(key, e.target.value)} />
+        : <input value={config.messages[key]} onChange={(e) => setMessage(key, e.target.value)} />}
+    </div>
+  );
+  return (
+    <div className="cols">
+      <div className="glass panel">
+        <div className="modhead">
+          <div><h3 style={{ margin: 0 }}>Pengaturan command Dàxia</h3><span className="hint">Edit teks dan aturan command; pratinjau Discord di samping mengikuti perubahanmu.</span></div>
+          <span className="spacer" />
+          <button className="btn primary" disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : 'Simpan semua'}</button>
+        </div>
+        <p className="hint">Placeholder teks yang tersedia: {`{userId}`, `{balance}`, `{reward}`, `{next}`, `{bet}`, `{payout}`, `{maxBet}`, `{frame}`, `{numbers}`, `{serverName}`, `{displayName}`, `{status}`, `{onlineCount}`, `{duration}`, `{joinedDate}`, `{level}`, `{progressBar}`, `{messages}`, `{roles}`, `{createdTimestamp}`, `{memberCount}`, `{channelCount}`}.</p>
+        <div className="section-title"><h3>Aturan ekonomi</h3><span>Hadiah daily dan pengali mengubah saldo game.</span></div>
+        <div className="settings-grid">
+          {Object.entries(economyLabels).map(([key, label]) => <div className="row" key={key}>
+            <label>{label}</label>
+            <input type="number" min="1" value={config.economy[key]} onChange={(e) => setEconomy(key, Number(e.target.value))} />
+          </div>)}
+        </div>
+        {textGroups.map((group) => <section key={group.title}>
+          <div className="section-title"><h3>{group.title}</h3></div>
+          {group.keys.map(renderTextField)}
+        </section>)}
+        <div className="section-title"><h3>Kartu profil GIF /fp</h3><span>Atur tulisan dan palet warna kartu animasi.</span></div>
+        <div className="actions" style={{ marginBottom: 14 }}>
+          <button type="button" className="btn" disabled={profileCardPreviewBusy} onClick={previewProfileCard}>
+            {profileCardPreviewBusy ? 'Membuat GIF…' : 'Pratinjau GIF /fp'}
+          </button>
+          <span className="hint">Pratinjau memakai pengaturan yang sedang diedit dan akun Discord kamu.</span>
+        </div>
+        {profileCardPreview && <div className="card-in" style={{ marginBottom: 16, textAlign: 'center' }}>
+          <img src={profileCardPreview} alt={`Pratinjau kartu GIF /fp untuk ${guild.name}`} style={{ display: 'block', width: '100%', borderRadius: 10 }} />
+        </div>}
+        <div className="settings-grid">
+          {Object.entries(cardLabels).map(([key, label]) => <div className="row" key={key}>
+            <label>{label}</label><input value={config.profileCard[key]} onChange={(e) => setCard(key, e.target.value)} />
+          </div>)}
+          {Object.entries({
+            background: 'Warna latar kartu', accent: 'Warna aksen kartu', detail: 'Warna detail kartu', glow: 'Warna kilau GIF',
+            slotSpinning: 'Warna slot berputar', slotJackpot: 'Warna jackpot', slotPair: 'Warna hadiah pasangan',
+            slotLoss: 'Warna hasil kalah', balanceEmbed: 'Warna embed saldo', dailyEmbed: 'Warna embed daily',
+            leaderboardEmbed: 'Warna embed leaderboard', profileEmbed: 'Warna embed profil', helpEmbed: 'Warna embed bantuan',
+          }).map(([key, label]) => (
+            <div className="row" key={key}><label>{label}</label><input type="color" value={config.profileCard.colors[key]} onChange={(e) => setCardColor(key, e.target.value)} /></div>
+          ))}
+        </div>
+      </div>
+      <div className="preview">
+        <h3 style={{ marginBottom: 12 }}>Pratinjau lengkap command</h3>
+        <div className="row">
+          <label>Pesan command yang ditinjau</label>
+          <select value={previewType} onChange={(event) => setPreviewType(event.target.value)}>
+            {previewOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </div>
+        <Preview message={previewMessage} ctx={previewCtx} />
+        <p className="hint">Pratinjau ini memakai contoh nilai untuk placeholder. Perubahan teks, pengali, dan warna di sisi kiri langsung terlihat; saat command dipakai, nilainya diganti data server yang sebenarnya.</p>
+        <p className="hint">Untuk melihat kartu GIF `/fp`, klik tombol **Pratinjau GIF /fp** di bagian pengaturannya.</p>
+      </div>
+    </div>
+  );
+}
+
+function TemplatesTab({ templates, guild, use, reload, toast }) {
+  const del = async (id) => { try { await api(`/api/guilds/${guild.id}/templates/${id}`, { method: 'DELETE' }); reload(); } catch (e) { toast(e.message, 'err'); } };
+  return (
+    <div className="glass panel">
+      <div className="section-title"><h3>Template undangan Discord</h3><span>Copywriting + CTA siap edit</span></div>
+      <div className="preset-grid">
+        {INVITE_TEMPLATES.map((preset) => <button type="button" className="preset" key={preset.id} style={{ '--preset-color': preset.color }} onClick={() => { use(preset.message); toast(`${preset.name} dimuat — ganti link invite sebelum kirim`, 'ok'); }}><b>{preset.name}</b><small>{preset.description}</small><span className="badge">{preset.category}</span></button>)}
+      </div>
+      <div className="section-title"><h3>Template siap pakai</h3><span>10 desain untuk mulai lebih cepat</span></div>
+      <div className="preset-grid">
+        {PRESET_TEMPLATES.map((preset) => <button type="button" className="preset" key={preset.id} style={{ '--preset-color': preset.color }} onClick={() => { use(preset.message); toast(`${preset.name} dimuat`, 'ok'); }}><b>{preset.name}</b><small>{preset.description}</small><span className="badge">{preset.category}</span></button>)}
+      </div>
+      <div className="section-title"><h3>Template tersimpan</h3><span>Template milik server ini</span></div>
+      {templates.length === 0 && <div className="empty">Belum ada template. Susun pesan di tab Kirim pesan, lalu klik “Simpan template”.</div>}
+      {templates.map((t) => (
+        <div className="tpl" key={t.id}>
+          <b>{t.name}</b>
+          <button className="btn small primary" onClick={() => use(t.message)}>Pakai</button>
+          <button className="btn small danger" onClick={() => del(t.id)}>Hapus</button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BroadcastTab({ allGuilds, message, setMessage, ctx, toast, assets }) {
+  const botGuilds = (allGuilds || []).filter((g) => g.botIn);
+  const [selected, setSelected] = useState({});
+  const [channelMap, setChannelMap] = useState({});
+  const [busy, setBusy] = useState(false);
+  const toggle = (id) => setSelected((current) => {
+    const next = { ...current };
+    if (next[id] !== undefined) delete next[id]; else next[id] = '';
+    return next;
+  });
+  useEffect(() => {
+    Object.keys(selected).forEach((id) => {
+      if (!channelMap[id]) api(`/api/guilds/${id}/channels`).then((r) => setChannelMap((current) => ({ ...current, [id]: r.channels }))).catch((e) => toast(e.message, 'err'));
+    });
+  }, [selected]);
+  const send = async () => {
+    const targets = Object.entries(selected).filter(([, channelId]) => channelId).map(([guildId, channelId]) => ({ guildId, channelId }));
+    if (!targets.length) return toast('Pilih server dan channel tujuan', 'err');
+    setBusy(true);
+    try { const result = await api('/api/broadcast', { method: 'POST', body: { targets, message } }); toast(`${result.results.filter((item) => item.ok).length} tujuan berhasil dikirimi`, result.ok ? 'ok' : 'err'); }
+    catch (e) { toast(e.message, 'err'); }
+    setBusy(false);
+  };
+  return (
+    <div className="cols">
+      <div>
+        <div className="glass panel" style={{ marginBottom: 20 }}>
+          <div className="modhead"><div><h3 style={{ margin: 0 }}>Broadcast lintas server</h3><span className="hint">Kirim satu pesan ke banyak server yang memasang bot.</span></div><span className="spacer" /><button className="btn primary" disabled={busy} onClick={send}>{busy ? 'Mengirim…' : 'Kirim ke semua pilihan'}</button></div>
+          <div className="actions" style={{ marginBottom: 12 }}><button className="btn small" onClick={() => setSelected(Object.fromEntries(botGuilds.map((g) => [g.id, selected[g.id] || ''])))}>Pilih semua server</button><button className="btn small" onClick={() => setSelected({})}>Kosongkan</button><span className="hint">{Object.keys(selected).length} server dipilih</span></div>
+          <div className="broadcast-list">
+            {botGuilds.map((g) => <div className="card-in" key={g.id}>
+              <label className="toggle"><input type="checkbox" checked={selected[g.id] !== undefined} onChange={() => toggle(g.id)} /> {g.name}</label>
+              {selected[g.id] !== undefined && <select style={{ marginTop: 8 }} value={selected[g.id]} onChange={(e) => setSelected((current) => ({ ...current, [g.id]: e.target.value }))}><option value="">Pilih channel tujuan…</option>{(channelMap[g.id] || []).map((c) => <option key={c.id} value={c.id}>#{c.name}</option>)}</select>}
+            </div>)}
+            {!botGuilds.length && <div className="empty">Belum ada server yang memasang bot.</div>}
+          </div>
+        </div>
+        <Editor message={message} onChange={setMessage} toast={toast} assets={assets} />
+      </div>
+      <div className="preview"><h3 style={{ marginBottom: 12 }}>Pratinjau broadcast</h3><Preview message={message} ctx={ctx} /><p className="hint">Pesan akan memakai data masing-masing server saat dikirim.</p></div>
+    </div>
+  );
+}
+
+function CommandMessagesTab({ me, toast }) {
+  const [config, setConfig] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const assets = { emojis: [], stickers: [] };
+  const ctx = {
+    'server.name': 'server saat command digunakan',
+    'server.id': 'ID server saat command digunakan',
+    'server.memberCount': '—',
+    'server.icon': '',
+    'user.name': me.username,
+    'user.mention': '\u0001@' + me.username + '\u0002',
+    'user.id': me.id,
+    'user.roles': 'Data role terbatas',
+    'user.roleNames': 'Data role terbatas',
+    'user.highestRole': 'Data role terbatas',
+    'user.avatar': me.avatar,
+    'channel.name': 'channel tempat command digunakan',
+    'channel.mention': '\u0001#channel\u0002',
+    'bot.name': 'Bot',
+    date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+  };
+
+  useEffect(() => {
+    api('/api/command-messages')
+      .then((result) => setConfig({ ...result, messages: result.messages.length ? result.messages : [blankMessage()] }))
+      .catch((e) => toast(e.message, 'err'));
+  }, []);
+
+  const updateMessage = (index, message) => setConfig((current) => ({
+    ...current,
+    messages: current.messages.map((item, i) => i === index ? message : item),
+  }));
+
+  const save = async () => {
+    setBusy(true);
+    try {
+      const result = await api('/api/command-messages', { method: 'PUT', body: config });
+      setConfig({ messages: result.messages, cooldownSeconds: result.cooldownSeconds, targetChannelId: result.targetChannelId });
+      toast('Pengaturan /pesan disimpan', 'ok');
+    } catch (e) {
+      toast(e.message, 'err');
+    }
+    setBusy(false);
+  };
+
+  const send = async () => {
+    setBusy(true);
+    try {
+      const result = await api('/api/command-messages/send', { method: 'POST', body: config });
+      setConfig({ ...config, targetChannelId: config.targetChannelId.trim() });
+      toast(`${result.sent} pesan terkirim ke #${result.channelName}`, 'ok');
+    } catch (e) {
+      toast(e.message, 'err');
+    }
+    setBusy(false);
+  };
+
+  if (!config) return <div className="empty">Memuat pengaturan command…</div>;
+  const validChannelId = /^\d{17,20}$/.test((config.targetChannelId || '').trim());
+  return (
+    <div className="cols">
+      <div>
+        <div className="glass panel">
+          <div className="modhead">
+            <div><h3 style={{ margin: 0 }}>Pengaturan Pesan</h3><span className="hint">Atur pesan dan channel tujuan untuk pengiriman dari website.</span></div>
+            <span className="spacer" />
+            <button className="btn primary" disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : 'Simpan pengaturan'}</button>
+          </div>
+          <div className="row">
+            <label>ID channel tujuan</label>
+            <input type="text" inputMode="numeric" value={config.targetChannelId || ''} onChange={(e) => setConfig({ ...config, targetChannelId: e.target.value.replace(/\D/g, '').slice(0, 20) })} placeholder="Tempel ID channel Discord di sini" />
+            <span className="hint">Developer Mode Discord → klik kanan channel → Copy Channel ID.</span>
+          </div>
+          <div className="row">
+            <label>Cooldown antar pengiriman dari web (detik, 5–86400)</label>
+            <input type="number" min="5" max="86400" step="1" value={config.cooldownSeconds} onChange={(e) => setConfig({ ...config, cooldownSeconds: Number(e.target.value) })} />
+          </div>
+          <div className="hint">Kirim Pesan memakai bot pribadimu dan bisa dikirim ke channel di server mana pun yang sudah dimasuki bot itu, selama bot punya akses ke channel. Jika menjalankan /pesan sebagai slash command, Discord membalas di channel tempat command digunakan.</div>
+          <div className="actions" style={{ marginTop: 14 }}>
+            <button className="btn primary" disabled={busy || !validChannelId} onClick={send}>{busy ? 'Mengirim…' : 'Kirim Pesan'}</button>
+            <button className="btn" disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : 'Simpan Pengaturan'}</button>
+          </div>
+        </div>
+        {config.messages.map((message, index) => (
+          <div className="glass panel" key={index} style={{ marginTop: 16 }}>
+            <div className="modhead">
+              <h3 style={{ margin: 0 }}>Pesan {index + 1}</h3>
+              <span className="spacer" />
+              {config.messages.length > 1 && <button className="btn small danger" onClick={() => setConfig({ ...config, messages: config.messages.filter((_, i) => i !== index) })}>Hapus pesan</button>}
+            </div>
+            <Editor message={message} onChange={(next) => updateMessage(index, next)} toast={toast} assets={assets} />
+          </div>
+        ))}
+        {config.messages.length < 5 && <button className="btn" style={{ marginTop: 16 }} onClick={() => setConfig({ ...config, messages: [...config.messages, blankMessage()] })}>Tambah pesan ({config.messages.length}/5)</button>}
+        <div className="actions" style={{ marginTop: 16 }}>
+          <button className="btn primary" disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : 'Simpan pengaturan'}</button>
+        </div>
+      </div>
+      <div className="preview">
+        <h3 style={{ marginBottom: 12 }}>Pratinjau</h3>
+        {config.messages.map((message, index) => <div key={index} style={{ marginBottom: 18 }}><p className="hint">Pesan {index + 1}</p><Preview message={message} ctx={ctx} /></div>)}
+        <p className="hint">Maksimal 5 pesan per penggunaan, dikirim satu per satu dengan jeda singkat.</p>
+      </div>
+    </div>
+  );
+}
+
+function WebsiteAccountAccess() {
+  const [account, setAccount] = useState(null);
+
+  useEffect(() => {
+    api('/api/auth/account').then((result) => {
+      setAccount(result);
+    }).catch((error) => {
+      setAccount({ error: error.message });
+    });
+  }, []);
+
+  return (
+    <div className="card-in" style={{ marginTop: 20 }}>
+      <h3 style={{ marginTop: 0 }}>Profil akun website</h3>
+      {!account ? <p className="hint">Memuat status akun…</p> : account.error ? <p className="hint">{account.error}</p> : <>
+        {account.configured ? <>
+          <p className="hint">Email login: <b>{account.email}</b> {account.emailVerified ? '• Terverifikasi' : '• Belum diverifikasi (opsional)'}</p>
+          {account.profile && <p className="hint" style={{ marginBottom: 0 }}>Nama: {account.profile.fullName} • HP: {account.profile.phone}</p>}
+          <p className="hint" style={{ marginBottom: 0 }}>Untuk memastikan akun email tetap terverifikasi, penggantian email/password dilakukan melalui alur verifikasi akun.</p>
+        </> : <p className="hint">Akun login website belum ditautkan. Keluar, lalu daftar atau masuk menggunakan email dan password di halaman awal.</p>}
+      </>}
+    </div>
+  );
+}
+
+function ProfileTab({ me, initialAccount, onAccountChange, onBack, toast }) {
+  const [account, setAccount] = useState(initialAccount || {});
+  const [profile, setProfile] = useState({
+    fullName: initialAccount?.profile?.fullName || '',
+    username: initialAccount?.profile?.username || me.username || '',
+    phone: initialAccount?.profile?.phone || '',
+  });
+  const [newEmail, setNewEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [code, setCode] = useState('');
+  const [otpPurpose, setOtpPurpose] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    api('/api/auth/account').then((result) => {
+      if (!active) return;
+      setAccount(result);
+      setProfile({
+        fullName: result.profile?.fullName || '',
+        username: result.profile?.username || me.username || '',
+        phone: result.profile?.phone || '',
+      });
+    }).catch((error) => { if (active) toast(error.message, 'err'); });
+    return () => { active = false; };
+  }, []);
+
+  const saveProfile = async (event) => {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      const result = await api('/api/profile', { method: 'POST', body: profile });
+      const updated = { ...account, profile: result.profile };
+      setAccount(updated);
+      onAccountChange(updated);
+      toast('Profil berhasil diperbarui.', 'ok');
+    } catch (error) { toast(error.message, 'err'); }
+    setBusy(false);
+  };
+
+  const requestOtp = async (event, purpose) => {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      const body = purpose === 'email'
+        ? { purpose, newEmail }
+        : { purpose, password: newPassword, confirmPassword };
+      const result = await api('/api/profile/request-otp', { method: 'POST', body });
+      setOtpPurpose(purpose);
+      setCode('');
+      toast(result.message, 'ok');
+    } catch (error) { toast(error.message, 'err'); }
+    setBusy(false);
+  };
+
+  const verifyOtp = async (event) => {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      const result = await api('/api/profile/verify-otp', { method: 'POST', body: { code } });
+      const updated = { ...account, email: result.email, emailVerified: true };
+      setAccount(updated);
+      onAccountChange(updated);
+      setOtpPurpose('');
+      setCode('');
+      setNewEmail('');
+      setNewPassword('');
+      setConfirmPassword('');
+      toast(result.message, 'ok');
+    } catch (error) { toast(error.message, 'err'); }
+    setBusy(false);
+  };
+
+  const cancelOtp = () => { setOtpPurpose(''); setCode(''); };
+  const avatarUrl = account.avatar || me.avatar;
+  const initial = (profile.username || me.username || 'E').trim().charAt(0).toUpperCase();
+
+  return (
+    <div className="wrap profile-page">
+      <button className="btn small profile-back" type="button" onClick={onBack}>← Kembali ke dashboard</button>
+      <div className="profile-heading">
+        <div><div className="badge">AKUN EMBED STUDIO</div><h1 className="page-title">Profil pengguna</h1><p className="sub">Kelola identitas dan keamanan akunmu di satu tempat.</p></div>
+      </div>
+      <div className="profile-layout">
+        <section className="glass profile-hero">
+          <div className="profile-avatar-wrap">
+            {avatarUrl ? <img className="profile-avatar" src={avatarUrl} alt={`Avatar ${profile.username || me.username}`} /> : <div className="profile-avatar profile-avatar-fallback" aria-hidden="true">{initial}</div>}
+            <span className="profile-online" aria-label="Akun Discord tertaut" title="Akun Discord tertaut" />
+          </div>
+          <span className="profile-eyebrow">AKUN TERTAUT</span>
+          <h2>{profile.username || me.username}</h2>
+          <p className="profile-discord">@{account.discordUsername || me.username} di Discord</p>
+          <div className="profile-email-chip"><span className="profile-check">✓</span><span>{account.email || 'Email belum tersedia'}</span></div>
+          <div className="profile-status">{account.emailVerified ? 'Email terverifikasi' : 'Email belum diverifikasi (opsional)'}</div>
+          <div className="profile-hero-note"><span aria-hidden="true">✦</span><span>Avatar diambil dari akun Discord yang sudah terhubung.</span></div>
+        </section>
+        <div className="profile-content">
+          <section className="glass panel profile-panel">
+            <div className="profile-section-head"><div><h2>Informasi profil</h2><p>Perubahan nama tersimpan langsung di akun Embed Studio.</p></div><span className="profile-section-icon">✎</span></div>
+            <form onSubmit={saveProfile} className="profile-form">
+              <div className="profile-forms">
+                <label className="row"><span>Nama lengkap</span><input type="text" autoComplete="name" maxLength="100" value={profile.fullName} onChange={(event) => setProfile((value) => ({ ...value, fullName: event.target.value }))} required /></label>
+                <label className="row"><span>Username</span><input type="text" autoComplete="nickname" maxLength="32" value={profile.username} onChange={(event) => setProfile((value) => ({ ...value, username: event.target.value }))} required /></label>
+              </div>
+              <label className="row"><span>Nomor HP</span><input type="text" inputMode="tel" autoComplete="tel" maxLength="24" value={profile.phone} onChange={(event) => setProfile((value) => ({ ...value, phone: event.target.value }))} required /></label>
+              <div className="actions"><button className="btn primary" type="submit" disabled={busy}>{busy ? 'Menyimpan…' : 'Simpan profil'}</button></div>
+            </form>
+          </section>
+          <div className="profile-security-grid">
+            <section className="glass panel profile-panel">
+              <div className="profile-section-head"><div><h2>Ganti email</h2><p>Kode OTP akan dikirim ke alamat email baru.</p></div><span className="profile-section-icon">✉</span></div>
+              {otpPurpose === 'email' ? (
+                <form onSubmit={verifyOtp} className="profile-form">
+                  <p className="profile-otp-destination">Masukkan kode 6 digit yang dikirim ke <b>{newEmail}</b>.</p>
+                  <label className="row"><span>Kode OTP</span><input type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength="6" value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))} required /></label>
+                  <div className="actions"><button className="btn primary" type="submit" disabled={busy || code.length !== 6}>{busy ? 'Memverifikasi…' : 'Verifikasi & ganti email'}</button><button className="btn" type="button" onClick={cancelOtp}>Batal</button></div>
+                </form>
+              ) : (
+                <form onSubmit={(event) => requestOtp(event, 'email')} className="profile-form">
+                  <label className="row"><span>Email saat ini</span><input type="text" value={account.email || ''} readOnly /></label>
+                  <label className="row"><span>Email baru</span><input type="text" inputMode="email" autoComplete="email" value={newEmail} onChange={(event) => setNewEmail(event.target.value)} placeholder="nama@email.com" required /></label>
+                  <button className="btn" type="submit" disabled={busy}>{busy ? 'Mengirim kode…' : 'Kirim kode verifikasi'}</button>
+                </form>
+              )}
+            </section>
+            <section className="glass panel profile-panel">
+              <div className="profile-section-head"><div><h2>Ganti password</h2><p>Verifikasi perubahan lewat OTP ke email akun saat ini.</p></div><span className="profile-section-icon">⌑</span></div>
+              {otpPurpose === 'password' ? (
+                <form onSubmit={verifyOtp} className="profile-form">
+                  <p className="profile-otp-destination">Masukkan kode 6 digit yang dikirim ke <b>{account.email}</b>.</p>
+                  <label className="row"><span>Kode OTP</span><input type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength="6" value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))} required /></label>
+                  <div className="actions"><button className="btn primary" type="submit" disabled={busy || code.length !== 6}>{busy ? 'Memverifikasi…' : 'Verifikasi & ganti password'}</button><button className="btn" type="button" onClick={cancelOtp}>Batal</button></div>
+                </form>
+              ) : (
+                <form onSubmit={(event) => requestOtp(event, 'password')} className="profile-form">
+                  <label className="row"><span>Password baru</span><input type="password" autoComplete="new-password" minLength="12" maxLength="256" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required /></label>
+                  <label className="row"><span>Ulangi password baru</span><input type="password" autoComplete="new-password" minLength="12" maxLength="256" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required /></label>
+                  <p className="profile-password-hint">Minimal 12 karakter. Password baru disimpan setelah OTP benar.</p>
+                  <button className="btn" type="submit" disabled={busy || newPassword.length < 12 || newPassword !== confirmPassword}>{busy ? 'Mengirim kode…' : 'Kirim OTP ke email saya'}</button>
+                </form>
+              )}
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function formatMetricBytes(bytes) {
+  if (!Number.isFinite(bytes)) return '—';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let value = bytes;
+  let unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit += 1;
+  }
+  return `${value.toFixed(unit > 0 && value < 10 ? 1 : 0)} ${units[unit]}`;
+}
+
+function HealthSparkline({ values, color }) {
+  const width = 120;
+  const height = 32;
+  const points = values.length > 1
+    ? values.map((value, index) => `${(index / (values.length - 1)) * width},${height - Math.min(100, Math.max(0, value)) / 100 * height}`).join(' ')
+    : '';
+  return <svg className="health-sparkline" viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+    {points && <polyline points={points} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
+  </svg>;
+}
+
+function HealthMetric({ label, value, detail, percent, trend, color = '#2563eb' }) {
+  const boundedPercent = Number.isFinite(percent) ? Math.max(0, Math.min(100, percent)) : null;
+  return <article className="health-metric">
+    <div className="health-metric-head"><span>{label}</span>{trend && <HealthSparkline values={trend} color={color} />}</div>
+    <strong>{value}</strong>
+    {detail && <small>{detail}</small>}
+    {boundedPercent !== null && <div className="health-meter" role="meter" aria-label={label} aria-valuemin="0" aria-valuemax="100" aria-valuenow={Math.round(boundedPercent)}><i style={{ width: `${boundedPercent}%`, background: color }} /></div>}
+  </article>;
+}
+
+function SystemHealthPanel() {
+  const [metrics, setMetrics] = useState(null);
+  const [error, setError] = useState('');
+  const [history, setHistory] = useState({ cpu: [], memory: [], disk: [] });
+  const [refreshing, setRefreshing] = useState(true);
+  const requestRef = useRef(false);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      if (requestRef.current || document.visibilityState === 'hidden') return;
+      requestRef.current = true;
+      try {
+        const result = await api('/api/owner/health', { cache: 'no-store' });
+        if (!active) return;
+        setMetrics(result);
+        setError('');
+        setHistory((current) => ({
+          cpu: [...current.cpu, result.cpu.processPercent ?? 0].slice(-30),
+          memory: [...current.memory, result.memory.process.rssBytes / result.memory.system.totalBytes * 100].slice(-30),
+          disk: [...current.disk, result.disk.usagePercent ?? 0].slice(-30),
+        }));
+      } catch (requestError) {
+        if (active) setError(requestError.message);
+      } finally {
+        requestRef.current = false;
+        if (active) setRefreshing(false);
+      }
+    };
+    void refresh();
+    const timer = setInterval(refresh, 5000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, []);
+
+  if (!metrics) return <section className="health-panel glass" aria-live="polite">
+    <div className="health-panel-title"><div><span className="badge">PEMANTAUAN LANGSUNG</span><h3>Stabilitas server</h3></div><span className="health-pulse" /></div>
+    {error ? <p className="health-error" role="alert">{error}</p> : <p className="hint">{refreshing ? 'Mengambil metrik dari server…' : 'Menunggu data metrik…'}</p>}
+  </section>;
+
+  const cpu = metrics.cpu.processPercent;
+  const memoryPercent = metrics.memory.system.usagePercent;
+  const diskPercent = metrics.disk.usagePercent;
+  const eventLoopP95 = metrics.eventLoop.p95DelayMs;
+  const httpErrorRate = metrics.http.serverErrorRate;
+  const critical = (cpu !== null && cpu >= 95)
+    || (memoryPercent !== null && memoryPercent >= 95)
+    || (diskPercent !== null && diskPercent >= 95)
+    || (eventLoopP95 !== null && eventLoopP95 >= 500)
+    || (metrics.http.requests >= 10 && httpErrorRate >= 0.25);
+  const warning = !critical && (
+    (cpu !== null && cpu >= 80)
+    || (memoryPercent !== null && memoryPercent >= 85)
+    || (diskPercent !== null && diskPercent >= 85)
+    || (eventLoopP95 !== null && eventLoopP95 >= 150)
+    || (metrics.http.requests >= 10 && httpErrorRate >= 0.05)
+  );
+  const statusLabel = critical ? 'Perlu perhatian' : warning ? 'Perlu dipantau' : 'Berjalan normal';
+  const statusClass = critical ? 'critical' : warning ? 'warning' : 'healthy';
+  const cpuLabel = cpu === null ? 'Mengumpulkan…' : `${cpu.toFixed(1)}%`;
+  const rss = metrics.memory.process.rssBytes;
+  const diskDetail = metrics.disk.available
+    ? `${formatMetricBytes(metrics.disk.freeBytes)} tersedia dari ${formatMetricBytes(metrics.disk.totalBytes)}`
+    : `Tidak tersedia${metrics.disk.error ? `: ${metrics.disk.error}` : ' pada platform ini'}`;
+  const eventLoopLabel = eventLoopP95 === null ? '—' : `${eventLoopP95.toFixed(1)} ms`;
+
+  return <section className="health-panel glass">
+    <div className="health-panel-title">
+      <div><span className="badge">PEMANTAUAN LANGSUNG · PEMILIK</span><h3>Stabilitas server</h3><p className="hint">Diperbarui otomatis setiap 5 detik. Hanya dapat dilihat pemilik website.</p></div>
+      <div className={`health-status ${statusClass}`}><i />{statusLabel}</div>
+    </div>
+    {error && <p className="health-error" role="alert">Pembaruan gagal: {error} · menampilkan data terakhir yang berhasil diterima.</p>}
+    <div className="health-metrics">
+      <HealthMetric label="CPU aplikasi" value={cpuLabel} detail="Proses Node.js" percent={cpu} trend={history.cpu} color="#3478f6" />
+      <HealthMetric label="CPU sistem" value={metrics.cpu.systemPercent === null ? '—' : `${metrics.cpu.systemPercent.toFixed(1)}%`} detail={`${metrics.cpu.cores} core · ${metrics.cpu.loadAverage ? `load ${metrics.cpu.loadAverage.map((value) => value.toFixed(2)).join(' / ')}` : 'load tidak tersedia'}`} percent={metrics.cpu.systemPercent} color="#8b5cf6" />
+      <HealthMetric label="RAM aplikasi" value={formatMetricBytes(rss)} detail={`Heap ${formatMetricBytes(metrics.memory.process.heapUsedBytes)} / ${formatMetricBytes(metrics.memory.process.heapTotalBytes)} · eksternal ${formatMetricBytes(metrics.memory.process.externalBytes)}`} percent={rss / metrics.memory.system.totalBytes * 100} trend={history.memory} color="#06a6a6" />
+      <HealthMetric label="RAM host" value={memoryPercent === null ? '—' : `${memoryPercent.toFixed(1)}%`} detail={`${formatMetricBytes(metrics.memory.system.usedBytes)} / ${formatMetricBytes(metrics.memory.system.totalBytes)} · ${metrics.memory.system.source}`} percent={memoryPercent} color="#10a36d" />
+      <HealthMetric label="Penyimpanan disk" value={metrics.disk.available && diskPercent !== null ? `${diskPercent.toFixed(1)}% terpakai` : 'Tidak tersedia'} detail={diskDetail} percent={diskPercent} trend={history.disk} color="#e59b24" />
+      <HealthMetric label="Respons event loop" value={eventLoopLabel} detail={`Puncak ${metrics.eventLoop.maxDelayMs === null ? '—' : `${metrics.eventLoop.maxDelayMs.toFixed(1)} ms`}`} />
+      <HealthMetric label="Latency web (p95)" value={`${metrics.http.p95LatencyMs.toFixed(0)} ms`} detail={`${metrics.http.requests} permintaan · rata-rata ${metrics.http.averageLatencyMs.toFixed(0)} ms · 5 menit`} />
+      <HealthMetric label="Error server HTTP" value={`${(httpErrorRate * 100).toFixed(1)}%`} detail={`${metrics.http.serverErrors} dari ${metrics.http.requests} permintaan · 5 menit`} />
+      <HealthMetric label="Bot Discord" value={`${metrics.bots.connected} / ${metrics.bots.configured} terhubung`} detail={`${metrics.bots.guilds} server · ${metrics.bots.averagePingMs === null ? 'belum ada ping' : `Gateway ${metrics.bots.averagePingMs.toFixed(0)} ms`}${metrics.bots.disconnected ? ` · ${metrics.bots.disconnected} offline` : ''}`} />
+    </div>
+    <div className="health-runtime">
+      <span><b>Node</b> {metrics.runtime.nodeVersion} · {metrics.runtime.platform}/{metrics.runtime.architecture}</span>
+      <span><b>Uptime aplikasi</b> {formatHealthDuration(metrics.runtime.processUptimeSeconds)}</span>
+      <span><b>Uptime host</b> {formatHealthDuration(metrics.runtime.hostUptimeSeconds)}</span>
+      <span><b>Sampel</b> {new Date(metrics.sampledAt).toLocaleTimeString('id-ID')}</span>
+    </div>
+  </section>;
+}
+
+function formatHealthDuration(seconds) {
+  if (!Number.isFinite(seconds)) return '—';
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return [days ? `${days}h` : '', hours ? `${hours}j` : '', `${minutes}m`].filter(Boolean).join(' ');
+}
+
+function SettingsTab({ me, toast, onBotConfiguredChange }) {
+  const [settings, setSettings] = useState(null);
+  const [clientId, setClientId] = useState('');
+  const [token, setToken] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const reload = () => api('/api/settings/bot').then((result) => {
+    setSettings(result);
+    setClientId(result.clientId || '');
+  }).catch((e) => toast(e.message, 'err'));
+
+  useEffect(() => { reload(); }, []);
+
+  const save = async (event) => {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      const result = await api('/api/settings/bot', { method: 'POST', body: { clientId, token } });
+      setSettings({
+        ...settings,
+        configured: true,
+        gatewayConnected: result.gatewayConnected,
+        commandsRegistered: result.commandsRegistered,
+        botName: result.botName,
+        botId: result.botId,
+        clientId: result.clientId,
+      });
+      onBotConfiguredChange({ botConfigured: true, botName: result.botName });
+      setToken('');
+      toast(!result.gatewayConnected
+        ? `Bot ${result.botName} tersimpan, tetapi gateway belum online.`
+        : result.commandsRegistered
+          ? `Bot ${result.botName} online; semua slash command berhasil disinkronkan.`
+          : `Bot ${result.botName} online, tetapi command gagal disinkronkan. Periksa log server.`,
+      result.gatewayConnected && result.commandsRegistered ? 'ok' : 'err');
+    } catch (e) {
+      toast(e.message, 'err');
+    }
+    setBusy(false);
+  };
+
+  const remove = async () => {
+    setBusy(true);
+    try {
+      await api('/api/settings/bot', { method: 'DELETE' });
+      setSettings({ ...settings, configured: false, gatewayConnected: false, commandsRegistered: false, botName: '', botId: '', clientId: '' });
+      onBotConfiguredChange({ botConfigured: false, botName: null, botAvatar: null });
+      setClientId('');
+      setToken('');
+      toast('Bot pribadi dihapus. Hubungkan bot lagi untuk menggunakan fitur pengiriman.', 'ok');
+    } catch (e) {
+      toast(e.message, 'err');
+    }
+    setBusy(false);
+  };
+
+  if (!settings) return <div className="empty">Memuat pengaturan…</div>;
+  const personalInviteUrl = settings.configured && settings.clientId
+    ? `https://discord.com/oauth2/authorize?${new URLSearchParams({ client_id: settings.clientId, permissions: '8', scope: 'bot applications.commands' })}`
+    : '';
+  const personalUserInstallUrl = settings.configured && settings.clientId
+    ? `https://discord.com/oauth2/authorize?${new URLSearchParams({ client_id: settings.clientId, scope: 'applications.commands', integration_type: '1' })}`
+    : '';
+
+  return (
+    <div className="glass panel">
+      <div className="modhead">
+        <div><h3 style={{ margin: 0 }}>Pengaturan bot</h3><span className="hint">Hubungkan bot Discord milikmu untuk pengiriman dari website.</span></div>
+        {settings.configured && <button className="btn small" type="button" onClick={reload}>Perbarui status</button>}
+      </div>
+      <div className="card-in" style={{ marginBottom: 16 }}>
+        <b>Bot yang digunakan</b>
+        <p className="hint" style={{ marginBottom: 0 }}>{settings.configured ? <>Bot pribadi tersimpan: {settings.botName} ({settings.botId}). {settings.gatewayConnected ? 'Gateway bot online.' : 'Gateway belum tersambung; periksa token dan konfigurasi bot di Developer Portal.'} {settings.commandsRegistered ? 'Semua slash command sudah tersinkron.' : 'Slash command belum terkonfirmasi tersinkron; cek log server jika belum muncul di Discord.'}</> : 'Belum ada bot pribadi. Fitur bot tidak tersedia sampai kamu menghubungkan bot milikmu sendiri.'}</p>
+      </div>
+      <div className="card-in" style={{ marginTop: 16 }}>
+        <b>Slash command untuk bot ini</b>
+        <p className="hint" style={{ marginBottom: 0 }}>Bot pribadi mendaftarkan `/pesan`, `/infodaxia`, `/profiledaxia`, `/fp` (kartu gambar foto profil + banner, nama, dan ID pengguna), `/daxia` (slot, balance, daily, leaderboard, profile), `/daxia-help`, `/daxiayt` (video terbaru channel YouTube Ideologi Akal), dan menu profil user. Command disinkronkan sebagai global command pada aplikasi bot ini, jadi tersedia di server tempat bot/aplikasi ini dipasang; Discord mungkin perlu beberapa menit untuk menampilkannya. `/pesan` memakai desain pesan yang disimpan di dashboard akun pemilik bot. Pesan yang dikirim dari dashboard atau command lain juga menyertakan footer serta tombol tautan YouTube Ideologi Akal dan Discord Dàxia; `/fp` khusus menampilkan satu kartu gambar tanpa promosi itu.</p>
+      </div>
+      <form onSubmit={save}>
+        <div className="row">
+          <label>Client ID aplikasi bot</label>
+          <input type="text" inputMode="numeric" autoComplete="off" value={clientId} onChange={(e) => setClientId(e.target.value.replace(/\D/g, '').slice(0, 20))} placeholder="Contoh: 123456789012345678" />
+          <span className="hint">Developer Portal → aplikasi bot → General Information → Application ID.</span>
+        </div>
+        <div className="row">
+          <label>Bot Token</label>
+          <SecretInput label="Bot Token" autoComplete="new-password" value={token} onChange={(e) => setToken(e.target.value)} placeholder={settings.configured ? 'Token tersimpan; isi hanya untuk mengganti token' : 'Tempel Bot Token dari halaman Bot'} />
+          <span className="hint">Token diverifikasi ke Discord, lalu dienkripsi sebelum disimpan. Token tidak akan ditampilkan kembali.</span>
+        </div>
+        <div className="actions">
+          <button className="btn primary" type="submit" disabled={busy || !clientId || !token}>{busy ? 'Memverifikasi…' : 'Verifikasi & simpan bot'}</button>
+          {settings.configured && <button className="btn danger" type="button" disabled={busy} onClick={remove}>Hapus bot pribadi</button>}
+        </div>
+      </form>
+      <DiscordBotIntentGuide clientId={settings.clientId || clientId} />
+      <WebsiteAccountAccess />
+      {personalInviteUrl && <div className="card-in" style={{ marginTop: 16 }}>
+        <b>Link pemasangan aplikasi Discord</b>
+        <p className="hint">Pilih sesuai kebutuhan. Pemasangan ke server menambahkan bot sebagai anggota server; pemasangan ke pengguna menambahkan aplikasi/command ke akun tanpa memasukkan bot sebagai anggota server. Untuk mengirim undangan ke orang lain, gunakan tautan Discord ini—bukan alamat halaman website di browser.</p>
+        <div className="actions">
+          <a className="btn small primary" href={personalInviteUrl} target="_blank" rel="noreferrer">Undang bot ke server</a>
+          <a className="btn small" href={personalUserInstallUrl} target="_blank" rel="noreferrer">Tambah aplikasi ke akun pengguna</a>
+        </div>
+        <p className="hint" style={{ marginBottom: 0 }}>Tautan server meminta izin Administrator, yang memberi akses sangat luas. Untuk pengiriman pesan saja, cukup berikan View Channel dan Send Messages. Tautan pemasangan pengguna memerlukan User Install aktif di Developer Portal → Installation.</p>
+      </div>}
+      <div className="section-title"><h3>Panduan penggunaan</h3><span>Setup satu kali untuk bot pribadi</span></div>
+      <ol className="hint" style={{ lineHeight: 1.8, paddingLeft: 22 }}>
+        <li>Buka <a href="https://discord.com/developers/applications" target="_blank" rel="noreferrer">Discord Developer Portal</a>, buat aplikasi, lalu buka tab <b>Bot</b> dan buat/reset token.</li>
+        <li>Pada tab <b>Bot → Privileged Gateway Intents</b>, aktifkan <b>SERVER MEMBERS INTENT</b> untuk welcome/goodbye. Biarkan <b>PRESENCE INTENT</b> dan <b>MESSAGE CONTENT INTENT</b> mati.</li>
+        <li>Salin Application ID dan Bot Token ke formulir di atas, lalu tekan <b>Verifikasi & simpan bot</b>. Token hanya dapat dilihat saat dibuat atau di-reset di portal Discord.</li>
+        <li>Pilih <b>Undang bot ke server</b> untuk memasang bot sebagai anggota server. Tautan ini meminta <b>Administrator</b>, izin yang memberi akses luas; untuk mengirim pesan saja cukup berikan View Channel dan Send Messages. Atau pilih <b>Tambah aplikasi ke akun pengguna</b> agar aplikasi/command tersedia tanpa bot menjadi anggota server; aktifkan User Install di Developer Portal → Installation.</li>
+        <li>Bot dapat mengirim ke channel mana pun di server yang sudah dimasukinya. Buka <b>Atur /pesan</b>, desain pesan, tempel ID channel, kemudian tekan <b>Kirim Pesan</b>.</li>
+      </ol>
+      <div className="card-in" style={{ marginTop: 16 }}>
+        <b>Pengaturan website dan keamanan</b>
+        <p className="hint" style={{ marginBottom: 0 }}>Application ID, Client Secret OAuth, dan Bot Token adalah milik aplikasi Discord kamu; Client Secret dimasukkan saat login dan tidak ditampilkan kembali. Kredensial tersebut disimpan terenkripsi per akun, bukan ditulis ke file .env bersama. BASE_URL, PORT, SESSION_SECRET, TIMEZONE, allowlist, dan CREDENTIAL_ENCRYPTION_KEY tetap merupakan pengaturan pemilik website.</p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Studio ---------- */
+function Studio({ guild, me, bot, onBack, toast, allGuilds, owner }) {
+  const [tab, setTab] = useState('send');
+  const [channels, setChannels] = useState([]);
+  const [templates, setTemplates] = useState([]);
+  const [assets, setAssets] = useState({ emojis: [], stickers: [] });
+  const [message, setMessage] = useState(blankMessage());
+
+  const reloadTemplates = () => api(`/api/guilds/${guild.id}/templates`).then((r) => setTemplates(r.templates)).catch(() => {});
+  useEffect(() => {
+    api(`/api/guilds/${guild.id}/channels`).then((r) => setChannels(r.channels)).catch((e) => toast(e.message, 'err'));
+    api(`/api/guilds/${guild.id}/assets`).then(setAssets).catch((e) => toast(e.message, 'err'));
+    reloadTemplates();
+  }, [guild.id]);
+
+  const ctx = useMemo(() => ({
+    'server.name': guild.name, 'server.id': guild.id, 'server.memberCount': String(guild.memberCount),
+    'server.icon': guild.icon || '', 'user.name': me.username, 'user.mention': '\u0001@' + me.username + '\u0002', 'user.id': me.id,
+    'user.roles': 'Role member server', 'user.roleNames': 'Role member server', 'user.highestRole': 'Role tertinggi',
+    'user.avatar': me.avatar, 'channel.name': channels[0]?.name || 'umum', 'channel.mention': '\u0001#' + (channels[0]?.name || 'umum') + '\u0002',
+    'bot.name': bot.name || 'Bot', botAvatar: bot.avatar,
+    date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+  }), [guild, me, channels, bot]);
+
+  const tabs = [['send', 'Kirim pesan'], ['commands', 'Command Dàxia'], ['welcome', 'Welcome'], ['goodbye', 'Goodbye'], ['templates', 'Template']];
+  if (owner) { tabs.push(['dm', 'Kirim DM']); tabs.push(['broadcast', 'Broadcast']); }
+  return (
+    <div className="wrap">
+      <div className="studio">
+        <aside className="glass side">
+          <div className="gname"><div className="gicon">{guild.icon ? <img src={guild.icon} alt="" /> : guild.name[0]}</div><span>{guild.name}</span></div>
+          <nav>{tabs.map(([k, l]) => <button key={k} className={'tab' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}>{l}</button>)}</nav>
+          <button className="btn small back" onClick={onBack}>Ganti server</button>
+        </aside>
+        <main>
+          {tab === 'send' && <SendTab {...{ guild, channels, message, setMessage, ctx, toast, reloadTemplates, assets }} />}
+          {tab === 'commands' && <CommandSettingsTab {...{ guild, toast, ctx }} />}
+          {tab === 'dm' && owner && <DmTab {...{ guild, message, setMessage, ctx, toast, assets }} />}
+          {tab === 'welcome' && <ModuleTab {...{ guild, channels, ctx, toast, assets }} kind="welcome" title="Pesan selamat datang" />}
+          {tab === 'goodbye' && <ModuleTab {...{ guild, channels, ctx, toast, assets }} kind="goodbye" title="Pesan perpisahan" />}
+          {tab === 'templates' && <TemplatesTab {...{ templates, guild, reload: reloadTemplates, toast }} use={(m) => { setMessage(m); setTab('send'); toast('Template dimuat', 'ok'); }} />}
+          {tab === 'broadcast' && <BroadcastTab {...{ allGuilds, message, setMessage, ctx, toast, assets }} />}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- App ---------- */
+function App() {
+  const [state, setState] = useState({ loading: true });
+  const [loginCredentials, setLoginCredentials] = useState({ clientId: '', clientSecret: '', botToken: '' });
+  const [websiteLogin, setWebsiteLogin] = useState({ email: '', password: '', remember: true });
+  const [registration, setRegistration] = useState({ email: '', password: '', confirmPassword: '' });
+  const [passwordReset, setPasswordReset] = useState({ email: '', code: '', password: '', confirmPassword: '' });
+  const [authMode, setAuthMode] = useState('login');
+  const [authNotice, setAuthNotice] = useState('');
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [guilds, setGuilds] = useState(null);
+  const [guild, setGuild] = useState(null);
+  const [commandMessagesOpen, setCommandMessagesOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [toastMsg, setToastMsg] = useState(null);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const tRef = useRef();
+  const toast = (msg, type = 'ok') => { setToastMsg({ msg, type }); clearTimeout(tRef.current); tRef.current = setTimeout(() => setToastMsg(null), 3200); };
+  const updateLoginCredential = (key, value) => setLoginCredentials((current) => ({ ...current, [key]: value }));
+  const loginWithWebsiteAccount = async (event) => {
+    event.preventDefault();
+    setLoginBusy(true);
+    setLoginError('');
+    try {
+      await api('/auth/local-login', { method: 'POST', body: websiteLogin });
+      location.assign('/');
+    } catch (error) {
+      setLoginError(error.message);
+      setLoginBusy(false);
+    }
+  };
+  const registerWebsiteAccount = async (event) => {
+    event.preventDefault();
+    setLoginBusy(true);
+    setLoginError('');
+    setAuthNotice('');
+    try {
+      await api('/auth/register', { method: 'POST', body: registration });
+      location.assign('/');
+    } catch (error) {
+      setLoginError(error.message);
+      setLoginBusy(false);
+    }
+  };
+  const requestPasswordReset = async (event) => {
+    event.preventDefault();
+    setLoginBusy(true);
+    setLoginError('');
+    setAuthNotice('');
+    try {
+      const result = await api('/auth/password-reset/request', {
+        method: 'POST',
+        body: { email: passwordReset.email },
+      });
+      setAuthNotice(result.message);
+      setAuthMode('reset-verify');
+    } catch (error) {
+      setLoginError(error.message);
+    } finally {
+      setLoginBusy(false);
+    }
+  };
+  const verifyPasswordReset = async (event) => {
+    event.preventDefault();
+    setLoginBusy(true);
+    setLoginError('');
+    try {
+      const result = await api('/auth/password-reset/verify', {
+        method: 'POST',
+        body: passwordReset,
+      });
+      setWebsiteLogin((current) => ({ ...current, email: passwordReset.email, password: '' }));
+      setPasswordReset({ email: passwordReset.email, code: '', password: '', confirmPassword: '' });
+      setAuthNotice(result.message);
+      setAuthMode('login');
+    } catch (error) {
+      setLoginError(error.message);
+    } finally {
+      setLoginBusy(false);
+    }
+  };
+  const connectPersonalApp = async (event) => {
+    event.preventDefault();
+    setLoginBusy(true);
+    setLoginError('');
+    try {
+      await api('/auth/setup', { method: 'POST', body: loginCredentials });
+      location.assign('/auth/login');
+    } catch (error) {
+      setLoginError(error.message);
+      setLoginBusy(false);
+    }
+  };
+  useEffect(() => { api('/api/me').then((r) => setState({ loading: false, ...r })).catch((error) => setState({ loading: false, user: null, serverError: error.message })); }, []);
+  useEffect(() => {
+    if (!state.user) return;
+    let active = true;
+    api('/api/guilds')
+      .then((result) => { if (active) setGuilds(result); })
+      .catch((error) => { if (active) toast(error.message, 'err'); });
+    return () => { active = false; };
+  }, [state.user, state.botConfigured]);
+
+  if (state.loading) return <div className="loading">Memuat…</div>;
+
+  if (!state.user) return (
+    <div className="login">
+      <div>
+        <div className="login-layout">
+          <section className="login-intro">
+            <div className="glass login-brand">
+              <div className="logo">E</div>
+              <div>
+                <div className="login-brand-title">Embed Studio</div>
+                <div className="login-brand-caption">DISCORD CREATOR DASHBOARD</div>
+              </div>
+            </div>
+            <h1>Pesan Discord, dirancang dengan mudah.</h1>
+            <p>Daftar atau masuk dengan email dan password, lalu hubungkan aplikasi dan bot Discord milikmu sendiri.</p>
+            <div className="login-feature-list">
+              <div className="login-feature">
+                <div className="login-feature-icon">✦</div>
+                <div><b>Editor pesan visual</b><span>Rancang embed, tombol, gambar, dan template.</span></div>
+              </div>
+              <div className="login-feature">
+                <div className="login-feature-icon">↗</div>
+                <div><b>Gunakan bot milikmu</b><span>Masukkan Application ID, Client Secret, dan Bot Token dari Developer Portal.</span></div>
+              </div>
+              <div className="login-feature">
+                <div className="login-feature-icon">⌘</div>
+                <div><b>Kelola server yang kamu miliki</b><span>Masuk dengan Discord untuk membuka dashboard server.</span></div>
+              </div>
+            </div>
+          </section>
+          <section className="glass login-card">
+            {state.websiteAccount ? <>
+              <div className="badge" style={{ marginBottom: 16 }}>LANGKAH 2 • HUBUNGKAN BOT</div>
+              <h2>Halo, {state.websiteAccount.profile?.fullName || state.websiteAccount.email}</h2>
+              <p>{state.websiteAccount.emailVerified ? 'Email kamu sudah terverifikasi.' : 'Email dapat dipakai untuk login; verifikasi hanya diperlukan untuk fitur pemulihan dan perubahan email.'} Masukkan kredensial aplikasi bot milikmu untuk menyelesaikan penyiapan.</p>
+              <form onSubmit={connectPersonalApp} className="auth-step">
+                <label className="row"><span>Application ID / Client ID</span><input type="text" inputMode="numeric" autoComplete="off" value={loginCredentials.clientId} onChange={(event) => updateLoginCredential('clientId', event.target.value.replace(/\D/g, '').slice(0, 20))} placeholder="ID aplikasi dari General Information" required /></label>
+                <label className="row"><span>Client Secret</span><SecretInput label="Client Secret" autoComplete="new-password" value={loginCredentials.clientSecret} onChange={(event) => updateLoginCredential('clientSecret', event.target.value)} placeholder="OAuth2 → Client Secret" required /></label>
+                <label className="row"><span>Bot Token</span><SecretInput label="Bot Token" autoComplete="new-password" value={loginCredentials.botToken} onChange={(event) => updateLoginCredential('botToken', event.target.value)} placeholder="Bot → Reset Token / Copy" required /></label>
+                <p className="hint" style={{ overflowWrap: 'anywhere' }}>Tambahkan Redirect URI ini di Developer Portal → OAuth2: <code>{location.origin}/auth/callback</code></p>
+                {(loginError || state.serverError) && <p role="alert" className="toast err" style={{ position: 'static' }}>{loginError || state.serverError}</p>}
+                <button className="btn primary" type="submit" disabled={loginBusy}>{loginBusy ? 'Memvalidasi kredensial…' : 'Verifikasi bot & lanjutkan'}</button>
+              </form>
+              <DiscordBotIntentGuide clientId={loginCredentials.clientId} />
+              <div className="login-security-note">
+                <span className="login-security-icon" aria-hidden="true">●</span>
+                <span><b>Rahasia tidak ditampilkan kembali.</b> Token bot dan Client Secret disimpan terenkripsi khusus akunmu, bukan di file `.env` bersama.</span>
+              </div>
+            </> : <>
+              <div className="badge" style={{ marginBottom: 16 }}>AKUN EMBED STUDIO</div>
+              {authMode !== 'reset-verify' && <div className="auth-switch" role="tablist" aria-label="Pilih masuk atau daftar">
+                <button type="button" className={authMode === 'login' ? 'on' : ''} onClick={() => { setAuthMode('login'); setLoginError(''); }}>Masuk</button>
+                <button type="button" className={authMode === 'register' ? 'on' : ''} onClick={() => { setAuthMode('register'); setLoginError(''); }}>Daftar</button>
+              </div>}
+              {authMode === 'login' ? <>
+                <h2>Masuk kembali</h2>
+                <p>Masuk dengan email dan password. Bot serta pengaturan Discord kamu akan dimuat kembali.</p>
+                {authNotice && <p className="hint" role="status">{authNotice}</p>}
+                <form onSubmit={loginWithWebsiteAccount} className="auth-step">
+                  <label className="row"><span>Email</span><input type="email" name="username" autoComplete="username" value={websiteLogin.email} onChange={(event) => setWebsiteLogin((current) => ({ ...current, email: event.target.value }))} placeholder="nama@email.com" required maxLength={254} /></label>
+                  <label className="row"><span>Password</span><SecretInput label="Password akun website" name="current-password" autoComplete="current-password" value={websiteLogin.password} onChange={(event) => setWebsiteLogin((current) => ({ ...current, password: event.target.value }))} placeholder="Password akun website" required maxLength={256} /></label>
+                  <label className="toggle"><input type="checkbox" checked={websiteLogin.remember} onChange={(event) => setWebsiteLogin((current) => ({ ...current, remember: event.target.checked }))} /> Ingat saya di perangkat ini</label>
+                  {loginError && <p role="alert" className="toast err" style={{ position: 'static' }}>{loginError}</p>}
+                  <button className="btn primary" type="submit" disabled={loginBusy || !websiteLogin.email || !websiteLogin.password}>{loginBusy ? 'Memeriksa…' : 'Masuk'}</button>
+                  <button className="btn" type="button" disabled={loginBusy} onClick={() => {
+                    setPasswordReset((current) => ({ ...current, email: websiteLogin.email }));
+                    setLoginError('');
+                    setAuthNotice('');
+                    setAuthMode('reset');
+                  }}>Lupa password?</button>
+                </form>
+                <p className="hint">Browser dapat menawarkan menyimpan email dan password di password manager jika kamu menyetujuinya. Embed Studio tidak menyimpan password asli.</p>
+              </> : authMode === 'reset' ? <>
+                <h2>Reset password</h2>
+                <p>Masukkan email akun. Jika terdaftar, kami kirim kode verifikasi untuk membuat password baru.</p>
+                <form onSubmit={requestPasswordReset} className="auth-step">
+                  <label className="row"><span>Email akun</span><input type="email" name="username" autoComplete="username" value={passwordReset.email} onChange={(event) => setPasswordReset((current) => ({ ...current, email: event.target.value }))} placeholder="nama@email.com" required maxLength={254} /></label>
+                  {loginError && <p role="alert" className="toast err" style={{ position: 'static' }}>{loginError}</p>}
+                  <button className="btn primary" type="submit" disabled={loginBusy || !passwordReset.email}>{loginBusy ? 'Memproses…' : 'Kirim kode reset'}</button>
+                  <button className="btn" type="button" disabled={loginBusy} onClick={() => { setAuthMode('login'); setLoginError(''); }}>Kembali ke login</button>
+                </form>
+              </> : authMode === 'reset-verify' ? <>
+                <h2>Buat password baru</h2>
+                <p>Kode enam digit dikirim ke <b>{passwordReset.email}</b> jika email terdaftar. Kode berlaku 10 menit.</p>
+                {authNotice && <p className="hint" role="status">{authNotice}</p>}
+                <form onSubmit={verifyPasswordReset} className="auth-step">
+                  <label className="row"><span>Kode OTP</span><input type="text" inputMode="numeric" autoComplete="one-time-code" value={passwordReset.code} onChange={(event) => setPasswordReset((current) => ({ ...current, code: event.target.value.replace(/\D/g, '').slice(0, 6) }))} placeholder="6 digit" required maxLength={6} /></label>
+                  <label className="row"><span>Password baru</span><SecretInput label="Password baru" autoComplete="new-password" value={passwordReset.password} onChange={(event) => setPasswordReset((current) => ({ ...current, password: event.target.value }))} placeholder="Minimal 12 karakter" required minLength={12} maxLength={256} /></label>
+                  <label className="row"><span>Ulangi password baru</span><SecretInput label="Ulangi password baru" autoComplete="new-password" value={passwordReset.confirmPassword} onChange={(event) => setPasswordReset((current) => ({ ...current, confirmPassword: event.target.value }))} placeholder="Ketik ulang password baru" required minLength={12} maxLength={256} /></label>
+                  {loginError && <p role="alert" className="toast err" style={{ position: 'static' }}>{loginError}</p>}
+                  <button className="btn primary" type="submit" disabled={loginBusy || passwordReset.code.length !== 6 || passwordReset.password.length < 12 || passwordReset.password !== passwordReset.confirmPassword}>{loginBusy ? 'Menyimpan…' : 'Simpan password baru'}</button>
+                  <button className="btn" type="button" disabled={loginBusy} onClick={() => { setAuthMode('reset'); setLoginError(''); }}>Kirim kode baru</button>
+                </form>
+              </> : <>
+                <h2>Buat akun baru</h2>
+                <p>Daftar langsung dengan email dan password. Nama dan nomor HP bisa dilengkapi nanti di profil.</p>
+                <form onSubmit={registerWebsiteAccount} className="auth-step">
+                  <label className="row"><span>Email</span><input type="email" autoComplete="email" value={registration.email} onChange={(event) => setRegistration((current) => ({ ...current, email: event.target.value }))} placeholder="nama@email.com" required maxLength={254} /></label>
+                  <label className="row"><span>Password</span><SecretInput label="Buat password" autoComplete="new-password" value={registration.password} onChange={(event) => setRegistration((current) => ({ ...current, password: event.target.value }))} placeholder="Minimal 12 karakter" required minLength={12} maxLength={256} /></label>
+                  <label className="row"><span>Ulangi password</span><SecretInput label="Ulangi password" autoComplete="new-password" value={registration.confirmPassword} onChange={(event) => setRegistration((current) => ({ ...current, confirmPassword: event.target.value }))} placeholder="Ketik ulang password" required minLength={12} maxLength={256} /></label>
+                  {loginError && <p role="alert" className="toast err" style={{ position: 'static' }}>{loginError}</p>}
+                  <button className="btn primary" type="submit" disabled={loginBusy || registration.password.length < 12 || registration.password !== registration.confirmPassword}>{loginBusy ? 'Membuat akun…' : 'Daftar'}</button>
+                  <p className="hint">Password harus 12–256 karakter. Email tidak diverifikasi saat pendaftaran; OTP hanya digunakan untuk reset password.</p>
+                </form>
+              </>}
+            </>}
+          </section>
+        </div>
+        <div className="login-footer">Embed Studio • Login email/password • Bot pribadi terhubung melalui Discord OAuth2</div>
+      </div>
+    </div>
+  );
+
+  const bot = { name: state.botName, avatar: state.botAvatar };
+  const logout = async () => { await api('/auth/logout', { method: 'POST' }); location.reload(); };
+  const updateProfileAccount = (account) => {
+    if (!account) return;
+    setState((current) => ({
+      ...current,
+      user: { ...current.user, username: account.profile?.username || current.user.username },
+      websiteAccount: {
+        ...current.websiteAccount,
+        email: account.email,
+        profile: account.profile,
+        emailVerified: account.emailVerified,
+      },
+    }));
+  };
+
+  return (
+    <>
+      <header className="top">
+        <div className="brand"><i>E</i>Embed Studio</div>
+        <span className="spacer" />
+        <button className="me profile-trigger" type="button" aria-label="Buka profil pengguna" aria-current={profileOpen ? 'page' : undefined} onClick={() => { setProfileOpen(true); setSettingsOpen(false); setCommandMessagesOpen(false); }}>
+          {state.user.avatar ? <img src={state.user.avatar} alt="" /> : <span className="profile-avatar-fallback profile-header-fallback" aria-hidden="true">{state.user.username?.charAt(0).toUpperCase() || 'E'}</span>}
+          <span>{state.user.username}</span>
+        </button>
+        {!guild && <button className="btn small" onClick={() => { setCommandMessagesOpen((open) => !open); setSettingsOpen(false); }}>{commandMessagesOpen ? 'Pilih server' : 'Atur /pesan'}</button>}
+        {!guild && <button className="btn small" onClick={() => { setSettingsOpen((open) => !open); setCommandMessagesOpen(false); }}>{settingsOpen ? 'Pilih server' : 'Pengaturan'}</button>}
+        <button className="btn small" onClick={() => state.botConfigured ? setInviteOpen(true) : setSettingsOpen(true)}>{state.botConfigured ? 'Undang bot' : 'Hubungkan bot'}</button>
+        <button className="btn small" onClick={logout}>Keluar</button>
+      </header>
+      {profileOpen ? <ProfileTab me={state.user} initialAccount={state.websiteAccount} onAccountChange={updateProfileAccount} onBack={() => setProfileOpen(false)} toast={toast} /> : guild ? <Studio guild={guild} me={state.user} bot={bot} allGuilds={guilds?.guilds || []} owner={state.owner} onBack={() => setGuild(null)} toast={toast} /> : settingsOpen ? (
+        <div className="wrap">
+          <h2 className="page-title">Pengaturan</h2>
+          <p className="sub">Kelola koneksi bot dan ikuti panduan penggunaan Embed Studio.</p>
+          {state.owner && <SystemHealthPanel />}
+          <SettingsTab me={state.user} toast={toast} onBotConfiguredChange={(changes) => setState((current) => ({ ...current, ...changes }))} />
+        </div>
+      ) : commandMessagesOpen ? (
+        <div className="wrap">
+          <h2 className="page-title">Command /pesan</h2>
+          <p className="sub">Atur desain pesan, tempel ID channel, lalu kirim dari website.</p>
+          <CommandMessagesTab me={state.user} toast={toast} />
+        </div>
+      ) : (
+        <div className="wrap">
+          {guilds && <EmojiManager guilds={guilds} toast={toast} />}
+          <h2 className="page-title">Pilih server</h2>
+          <p className="sub">Pilih server untuk membuka dashboard, atau tambahkan bot langsung ke server yang kamu kelola.</p>
+          {!guilds ? <div className="empty">Memuat server…</div> : guilds.guilds.length === 0 ? (
+            <div className="glass empty">Belum ada server yang bisa dikelola. {state.botConfigured ? 'Undang bot ke servermu, lalu muat ulang halaman.' : 'Hubungkan bot milikmu lewat Pengaturan terlebih dahulu.'}<br />{state.botConfigured ? <a href={guilds.inviteUrl} target="_blank" rel="noreferrer"><button className="btn primary">Undang bot</button></a> : <button className="btn primary" onClick={() => setSettingsOpen(true)}>Buka Pengaturan bot</button>}</div>
+          ) : (
+            <>
+              <div className="guilds">
+                {guilds.guilds.map((g) => g.botIn ? (
+                  <button key={g.id} className="glass guild" onClick={() => setGuild(g)}>
+                    <div className="gicon">{g.icon ? <img src={g.icon} alt="" /> : g.name[0]}</div>
+                    <div><b>{g.name}</b><br /><small>{g.memberCount ?? '—'} anggota • Bot aktif</small></div>
+                  </button>
+                ) : (
+                  <div key={g.id} className="glass guild">
+                    <div className="gicon">{g.icon ? <img src={g.icon} alt="" /> : g.name[0]}</div>
+                    <div><b>{g.name}</b><br /><small>Bot belum ditambahkan</small></div>
+                    {state.botConfigured
+                      ? <a className="btn primary" href={g.inviteUrl || `/invite?guild_id=${encodeURIComponent(g.id)}`} target="_blank" rel="noreferrer">Tambahkan bot ke sini</a>
+                      : <button className="btn primary" onClick={() => setSettingsOpen(true)}>Hubungkan bot dulu</button>}
+                  </div>
+                ))}
+              </div>
+              <p className="hint" style={{ marginTop: 20 }}>Server kamu belum muncul? {state.botConfigured ? <><a href={guilds.inviteUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--cyan)' }}>Undang bot</a>, lalu muat ulang halaman.</> : 'Hubungkan bot milikmu di Pengaturan terlebih dahulu.'}</p>
+            </>
+          )}
+        </div>
+      )}
+      {toastMsg && <div className={'toast ' + toastMsg.type} role="status">{toastMsg.msg}</div>}
+      {inviteOpen && guilds?.shareUrl && <InviteDialog url={guilds.shareUrl} appUrl={guilds.appInstallUrl} onClose={() => setInviteOpen(false)} toast={toast} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

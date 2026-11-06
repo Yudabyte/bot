@@ -1,0 +1,9 @@
+node_modules
+.env
+data/db.json
+data/sessions.json
+data/sessions.json.*.tmp
+loginpengguna.json
+loginpengguna.json.*.tmp
+uploads/*
+!uploads/.gitkeep
